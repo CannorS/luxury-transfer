@@ -7,7 +7,7 @@ const vehicles = [
     id: 'mercedes-s-class',
     name: 'Mercedes-Benz S-Class',
     class: 'executive',
-    classLabel: 'Executive Sedan',
+    classLabel: 'Lüks Sedan',
     passengers: 3,
     luggage: 3,
     amenities: ['Wi-Fi', 'Mini Bar', 'USB Şarj', 'Klima', 'Deri Koltuk', 'Ambient Aydınlatma'],
@@ -22,7 +22,7 @@ const vehicles = [
     id: 'bmw-7-series',
     name: 'BMW 7 Serisi',
     class: 'executive',
-    classLabel: 'Executive Sedan',
+    classLabel: 'Lüks Sedan',
     passengers: 3,
     luggage: 3,
     amenities: ['Wi-Fi', 'USB Şarj', 'Klima', 'Deri Koltuk', 'Isıtmalı Koltuk'],
@@ -37,7 +37,7 @@ const vehicles = [
     id: 'mercedes-e-class',
     name: 'Mercedes-Benz E-Class',
     class: 'executive',
-    classLabel: 'Business Sedan',
+    classLabel: 'İş Sedanı',
     passengers: 3,
     luggage: 2,
     amenities: ['Wi-Fi', 'USB Şarj', 'Klima', 'Deri Koltuk'],
@@ -151,7 +151,7 @@ function renderFleetCard(v) {
   return `
     <div class="fleet-card">
       <h4 class="fleet-card__name">${v.name}</h4>
-      <p class="fleet-card__desc">${v.classLabel} · ${v.amenities.slice(0, 3).join(', ')}</p>
+      <p class="fleet-card__desc">${v.classLabel} · ${v.passengers} Yolcu · ${v.luggage} Bagaj</p>
       <div class="fleet-card__image">
         <img src="${vehicleImages[v.id]}" alt="${v.name}" draggable="false">
       </div>

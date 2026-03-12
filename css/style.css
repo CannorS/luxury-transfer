@@ -20,8 +20,8 @@
   --card-bg: #FFFFFF;
   --logo-text: #1A1A1A;
 
-  --font-heading: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
@@ -92,7 +92,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-heading);
   line-height: 1.2;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 h1 { font-size: 3rem; }
