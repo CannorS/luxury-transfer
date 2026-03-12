@@ -22,7 +22,7 @@
 
 .btn--primary {
   background: var(--primary);
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .btn--primary:hover {
@@ -33,7 +33,7 @@
 
 .btn--accent {
   background: var(--accent);
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .btn--accent:hover {
@@ -43,24 +43,25 @@
 }
 
 .btn--gold {
-  background: var(--gold);
-  color: var(--white);
+  background: var(--primary);
+  color: #FFFFFF;
 }
 
 .btn--gold:hover {
-  background: #b8963e;
+  background: var(--primary-dark);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn--outline {
   background: transparent;
-  border-color: var(--white);
-  color: var(--white);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
 }
 
 .btn--outline:hover {
-  background: var(--white);
-  color: var(--black);
+  background: var(--card-bg);
+  color: var(--text-heading);
 }
 
 .btn--outline-dark {
@@ -71,12 +72,12 @@
 
 .btn--outline-dark:hover {
   background: var(--primary);
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .btn--whatsapp {
   background: #25D366;
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .btn--whatsapp:hover {
@@ -107,7 +108,7 @@
 
 /* --- Card --- */
 .card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -143,7 +144,7 @@
 
 /* Service Card */
 .service-card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 2.5rem 2rem;
   text-align: center;
@@ -167,7 +168,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--white);
+  color: #FFFFFF;
   font-size: 1.75rem;
 }
 
@@ -184,7 +185,7 @@
 
 /* Vehicle Card */
 .vehicle-card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -241,7 +242,7 @@
   gap: 1.25rem;
   margin-bottom: 1rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--border);
 }
 
 .vehicle-card__spec {
@@ -266,7 +267,7 @@
 }
 
 .vehicle-card__amenity {
-  background: var(--gray-100);
+  background: var(--bg-alt);
   padding: 0.25rem 0.6rem;
   border-radius: 50px;
   font-size: 0.75rem;
@@ -287,7 +288,7 @@
 .vehicle-card__price strong {
   display: block;
   font-size: 1.3rem;
-  color: var(--black);
+  color: var(--text-heading);
   font-family: var(--font-heading);
 }
 
@@ -315,7 +316,7 @@
   display: block;
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--dark);
+  color: var(--text);
   margin-bottom: 0.4rem;
 }
 
@@ -324,12 +325,12 @@
 .form-textarea {
   width: 100%;
   padding: 0.8rem 1rem;
-  border: 1.5px solid var(--gray-200);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-family: var(--font-body);
   font-size: 0.95rem;
-  color: var(--dark);
-  background: var(--white);
+  color: var(--text);
+  background: var(--card-bg);
   transition: border-color var(--transition), box-shadow var(--transition);
   outline: none;
 }
@@ -384,9 +385,9 @@
   justify-content: center;
   font-weight: 700;
   font-size: 0.9rem;
-  border: 2px solid var(--gray-200);
+  border: 2px solid var(--border);
   color: #999;
-  background: var(--white);
+  background: var(--bg);
   transition: all var(--transition);
   flex-shrink: 0;
 }
@@ -394,13 +395,13 @@
 .step-indicator__circle--active {
   border-color: var(--primary);
   background: var(--primary);
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .step-indicator__circle--done {
   border-color: var(--accent);
   background: var(--accent);
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .step-indicator__line {
@@ -436,7 +437,7 @@
 }
 
 .modal {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   max-width: 700px;
   width: 100%;
@@ -460,7 +461,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
-  color: var(--dark);
+  color: var(--text);
   transition: background var(--transition);
   z-index: 10;
 }
@@ -497,7 +498,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: var(--dark);
+  color: var(--text);
   margin-bottom: 0.75rem;
 }
 
@@ -509,15 +510,15 @@
 }
 
 .modal__amenity {
-  background: var(--gray-100);
+  background: var(--bg-alt);
   padding: 0.4rem 1rem;
   border-radius: 50px;
   font-size: 0.85rem;
-  color: var(--dark);
+  color: var(--text);
 }
 
 .modal__pricing {
-  background: var(--gray-100);
+  background: var(--bg-alt);
   border-radius: var(--radius-sm);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
@@ -531,7 +532,7 @@
 }
 
 .modal__pricing-row + .modal__pricing-row {
-  border-top: 1px solid var(--gray-200);
+  border-top: 1px solid var(--border);
 }
 
 .modal__pricing-label {
@@ -540,12 +541,12 @@
 
 .modal__pricing-value {
   font-weight: 700;
-  color: var(--black);
+  color: var(--text-heading);
 }
 
 /* --- Testimonial Card --- */
 .testimonial-card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   padding: 2rem;
   box-shadow: var(--shadow-sm);
@@ -582,7 +583,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--white);
+  color: #FFFFFF;
   font-weight: 700;
   font-size: 1rem;
 }
@@ -590,7 +591,7 @@
 .testimonial-card__name {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--black);
+  color: var(--text-heading);
 }
 
 .testimonial-card__role {
@@ -617,7 +618,7 @@
   margin: 0 auto 1.25rem;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: var(--white);
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -643,11 +644,11 @@
   background: linear-gradient(135deg, var(--black) 0%, var(--primary-dark) 100%);
   padding: 4rem 0;
   text-align: center;
-  color: var(--white);
+  color: #FFFFFF;
 }
 
 .cta-banner__title {
-  color: var(--white);
+  color: #FFFFFF;
   font-size: 2.25rem;
   margin-bottom: 0.75rem;
 }
@@ -674,7 +675,7 @@
   gap: 1rem;
   flex-wrap: wrap;
   padding: 1.5rem;
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   margin-bottom: 2.5rem;
@@ -711,7 +712,7 @@
 }
 
 .booking-option {
-  border: 2px solid var(--gray-200);
+  border: 2px solid var(--border);
   border-radius: var(--radius-md);
   padding: 2rem;
   cursor: pointer;
@@ -749,12 +750,12 @@
 .chip {
   display: inline-block;
   padding: 0.45rem 1rem;
-  border: 1.5px solid var(--gray-200);
+  border: 1.5px solid var(--border);
   border-radius: 50px;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all var(--transition);
-  background: var(--white);
+  background: var(--card-bg);
 }
 
 .chip:hover {
@@ -763,13 +764,13 @@
 
 .chip.selected {
   background: var(--primary);
-  color: var(--white);
+  color: #FFFFFF;
   border-color: var(--primary);
 }
 
 /* Booking Summary */
 .booking-summary {
-  background: var(--gray-100);
+  background: var(--bg-alt);
   border-radius: var(--radius-md);
   padding: 2rem;
 }
@@ -782,7 +783,7 @@
 }
 
 .booking-summary__row + .booking-summary__row {
-  border-top: 1px solid var(--gray-200);
+  border-top: 1px solid var(--border);
 }
 
 .booking-summary__label {
@@ -791,7 +792,7 @@
 
 .booking-summary__value {
   font-weight: 600;
-  color: var(--black);
+  color: var(--text-heading);
 }
 
 .booking-summary__total {
@@ -885,4 +886,47 @@
   font-size: 0.9rem;
   color: #666;
   line-height: 1.6;
+}
+
+/* --- Dark mode overrides --- */
+[data-theme="dark"] .card__text,
+[data-theme="dark"] .service-card__text,
+[data-theme="dark"] .vehicle-card__spec,
+[data-theme="dark"] .vehicle-card__amenity,
+[data-theme="dark"] .vehicle-card__price,
+[data-theme="dark"] .testimonial-card__text,
+[data-theme="dark"] .step__text,
+[data-theme="dark"] .booking-option__text,
+[data-theme="dark"] .booking-summary__label,
+[data-theme="dark"] .modal__pricing-label,
+[data-theme="dark"] .filter-bar__label,
+[data-theme="dark"] .contact-info-card__text,
+[data-theme="dark"] .value-card__text {
+  color: #AAA;
+}
+
+[data-theme="dark"] .chip {
+  background: var(--bg-alt);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .booking-option.selected {
+  background: rgba(91,155,213,0.1);
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-textarea {
+  background: var(--bg-alt);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .form-input::placeholder {
+  color: #666;
+}
+
+[data-theme="dark"] .cta-banner {
+  background: linear-gradient(135deg, #0A0A0A 0%, var(--primary-dark) 100%);
 }
