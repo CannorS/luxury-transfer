@@ -666,21 +666,40 @@
 
 .fleet-slider {
   overflow: hidden;
+  cursor: grab;
+}
+
+.fleet-slider.dragging {
+  cursor: grabbing;
+}
+
+.fleet-slider.dragging .fleet-slider__track {
+  transition: none;
 }
 
 .fleet-slider__track {
   display: flex;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
 }
 
 .fleet-slider__track .fleet-card {
   flex: 0 0 25%;
-  padding: 0 1rem;
   min-width: 0;
 }
 
 .fleet-card {
   text-align: center;
+  padding: 1.5rem 1rem;
+  border-radius: var(--radius-md);
+  transition: background var(--transition);
+}
+
+.fleet-card:hover {
+  background: #F2F2F2;
+}
+
+[data-theme="dark"] .fleet-card:hover {
+  background: #222222;
 }
 
 .fleet-card__name {
@@ -738,55 +757,6 @@
 [data-theme="dark"] .fleet-card__desc { color: #777; }
 [data-theme="dark"] .fleet-card__spec { color: #999; }
 
-.fleet-slider__nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.fleet-slider__arrow {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  border: 1.5px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-}
-
-.fleet-slider__arrow:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.fleet-slider__dots {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.fleet-slider__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-full);
-  border: none;
-  background: var(--border);
-  cursor: pointer;
-  transition: all var(--transition);
-  padding: 0;
-}
-
-.fleet-slider__dot.active {
-  background: var(--text-heading);
-  width: 24px;
-  border-radius: 4px;
-}
 
 @media (max-width: 1024px) {
   .fleet-slider__track .fleet-card {

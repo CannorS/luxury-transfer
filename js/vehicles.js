@@ -139,8 +139,6 @@ function renderVehicleCard(v, showBookBtn = true) {
 }
 
 /* Fleet slider - home page */
-let fleetIndex = 0;
-
 function getFleetSVG(cls) {
   if (cls === 'vip-van') {
     return `<svg viewBox="0 0 260 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -204,51 +202,81 @@ function renderFeaturedVehicles() {
   const container = document.getElementById('featured-vehicles');
   if (!container) return;
   container.innerHTML = vehicles.map(v => renderFleetCard(v)).join('');
-  updateFleetSlider();
+  initFleetDrag();
 }
 
-function getFleetVisible() {
-  if (window.innerWidth <= 480) return 1;
-  if (window.innerWidth <= 768) return 2;
-  if (window.innerWidth <= 1024) return 3;
-  return 4;
-}
-
-function slideFleet(dir) {
-  const visible = getFleetVisible();
-  const maxIndex = vehicles.length - visible;
-  fleetIndex = Math.max(0, Math.min(fleetIndex + dir, maxIndex));
-  updateFleetSlider();
-}
-
-function goToFleetSlide(i) {
-  fleetIndex = i;
-  updateFleetSlider();
-}
-
-function updateFleetSlider() {
+/* Drag to scroll */
+function initFleetDrag() {
+  const slider = document.getElementById('fleet-slider');
   const track = document.getElementById('featured-vehicles');
-  if (!track) return;
-  const visible = getFleetVisible();
-  const pct = (fleetIndex / vehicles.length) * 100;
-  track.style.transform = `translateX(-${pct}%)`;
+  if (!slider || !track) return;
 
-  const dotsContainer = document.getElementById('fleet-dots');
-  if (!dotsContainer) return;
-  const maxIndex = vehicles.length - visible;
-  let dots = '';
-  for (let i = 0; i <= maxIndex; i++) {
-    dots += `<button class="fleet-slider__dot ${i === fleetIndex ? 'active' : ''}" onclick="goToFleetSlide(${i})"></button>`;
+  let isDragging = false;
+  let startX = 0;
+  let currentTranslate = 0;
+  let prevTranslate = 0;
+
+  function getMaxTranslate() {
+    return -(track.scrollWidth - slider.offsetWidth);
   }
-  dotsContainer.innerHTML = dots;
-}
 
-window.addEventListener('resize', () => {
-  const visible = getFleetVisible();
-  const maxIndex = vehicles.length - visible;
-  if (fleetIndex > maxIndex) fleetIndex = Math.max(0, maxIndex);
-  updateFleetSlider();
-});
+  function clamp(val) {
+    return Math.max(getMaxTranslate(), Math.min(0, val));
+  }
+
+  function setPosition(px) {
+    track.style.transform = `translateX(${px}px)`;
+  }
+
+  // Mouse events
+  slider.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    slider.classList.add('dragging');
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const diff = e.clientX - startX;
+    currentTranslate = clamp(prevTranslate + diff);
+    setPosition(currentTranslate);
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    slider.classList.remove('dragging');
+    prevTranslate = currentTranslate;
+  });
+
+  // Touch events
+  slider.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    slider.classList.add('dragging');
+  }, { passive: true });
+
+  slider.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const diff = e.touches[0].clientX - startX;
+    currentTranslate = clamp(prevTranslate + diff);
+    setPosition(currentTranslate);
+  }, { passive: true });
+
+  slider.addEventListener('touchend', () => {
+    isDragging = false;
+    slider.classList.remove('dragging');
+    prevTranslate = currentTranslate;
+  });
+
+  // Reset on resize
+  window.addEventListener('resize', () => {
+    currentTranslate = clamp(currentTranslate);
+    prevTranslate = currentTranslate;
+    setPosition(currentTranslate);
+  });
+}
 
 /* Render all vehicles on fleet page */
 function renderVehicleGrid(filterClass, filterPassengers) {
