@@ -138,13 +138,65 @@ function renderVehicleCard(v, showBookBtn = true) {
     </div>`;
 }
 
-/* Render featured vehicles on home page */
+/* Render featured vehicles on home page (slider) */
+let vehicleSliderIndex = 0;
+
 function renderFeaturedVehicles() {
   const container = document.getElementById('featured-vehicles');
   if (!container) return;
-  const featured = vehicles.filter(v => v.featured);
-  container.innerHTML = featured.map(v => renderVehicleCard(v)).join('');
+  container.innerHTML = vehicles.map(v => renderVehicleCard(v)).join('');
+  renderVehicleDots();
+  updateVehicleSlider();
 }
+
+function getVisibleCount() {
+  if (window.innerWidth <= 768) return 1;
+  if (window.innerWidth <= 1024) return 2;
+  return 3;
+}
+
+function slideVehicles(dir) {
+  const total = vehicles.length;
+  const visible = getVisibleCount();
+  const maxIndex = total - visible;
+  vehicleSliderIndex = Math.max(0, Math.min(vehicleSliderIndex + dir, maxIndex));
+  updateVehicleSlider();
+}
+
+function goToVehicleSlide(index) {
+  vehicleSliderIndex = index;
+  updateVehicleSlider();
+}
+
+function updateVehicleSlider() {
+  const track = document.getElementById('featured-vehicles');
+  if (!track) return;
+  const card = track.querySelector('.vehicle-card');
+  if (!card) return;
+  const cardWidth = card.offsetWidth + 24; // 24 = 2 * 0.75rem margin
+  track.style.transform = `translateX(-${vehicleSliderIndex * cardWidth}px)`;
+  renderVehicleDots();
+}
+
+function renderVehicleDots() {
+  const dotsContainer = document.getElementById('vehicle-dots');
+  if (!dotsContainer) return;
+  const total = vehicles.length;
+  const visible = getVisibleCount();
+  const maxIndex = total - visible;
+  let dots = '';
+  for (let i = 0; i <= maxIndex; i++) {
+    dots += `<button class="vehicle-slider__dot ${i === vehicleSliderIndex ? 'active' : ''}" onclick="goToVehicleSlide(${i})" aria-label="Slide ${i + 1}"></button>`;
+  }
+  dotsContainer.innerHTML = dots;
+}
+
+window.addEventListener('resize', () => {
+  const visible = getVisibleCount();
+  const maxIndex = vehicles.length - visible;
+  if (vehicleSliderIndex > maxIndex) vehicleSliderIndex = Math.max(0, maxIndex);
+  updateVehicleSlider();
+});
 
 /* Render all vehicles on fleet page */
 function renderVehicleGrid(filterClass, filterPassengers) {

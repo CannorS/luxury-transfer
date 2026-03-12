@@ -639,6 +639,95 @@
   line-height: 1.6;
 }
 
+/* --- Vehicle Slider --- */
+.vehicle-slider {
+  position: relative;
+  overflow: hidden;
+  margin: 0 -0.5rem;
+}
+
+.vehicle-slider__track {
+  display: flex;
+  transition: transform 0.5s ease;
+  gap: 0;
+}
+
+.vehicle-slider__track .vehicle-card {
+  flex: 0 0 calc(33.333% - 1.5rem);
+  margin: 0 0.75rem;
+  min-width: 0;
+}
+
+.vehicle-slider__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--bg);
+  color: var(--text-heading);
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.vehicle-slider__arrow:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+.vehicle-slider__arrow--left {
+  left: 0.25rem;
+}
+
+.vehicle-slider__arrow--right {
+  right: 0.25rem;
+}
+
+.vehicle-slider__dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.vehicle-slider__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+  padding: 0;
+}
+
+.vehicle-slider__dot.active {
+  background: var(--primary);
+  width: 28px;
+  border-radius: 5px;
+}
+
+@media (max-width: 1024px) {
+  .vehicle-slider__track .vehicle-card {
+    flex: 0 0 calc(50% - 1.5rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .vehicle-slider__track .vehicle-card {
+    flex: 0 0 calc(100% - 1.5rem);
+  }
+  .vehicle-slider__arrow { width: 36px; height: 36px; font-size: 1rem; }
+}
+
 /* --- CTA Banner --- */
 .cta-banner {
   background: linear-gradient(135deg, var(--black) 0%, var(--primary-dark) 100%);

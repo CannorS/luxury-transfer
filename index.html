@@ -111,12 +111,17 @@
     </div>
   </section>
 
-  <!-- Öne Çıkan Araçlar -->
+  <!-- Öne Çıkan Araçlar - Slider -->
   <section class="section section--gray">
     <div class="container">
       <h2 class="section-title reveal">Araç Filomuz</h2>
       <p class="section-subtitle reveal">Lüks ve konfor standartlarını karşılayan premium araçlarımız.</p>
-      <div class="grid grid--3" id="featured-vehicles"></div>
+      <div class="vehicle-slider reveal">
+        <button class="vehicle-slider__arrow vehicle-slider__arrow--left" onclick="slideVehicles(-1)" aria-label="Önceki">&#10094;</button>
+        <div class="vehicle-slider__track" id="featured-vehicles"></div>
+        <button class="vehicle-slider__arrow vehicle-slider__arrow--right" onclick="slideVehicles(1)" aria-label="Sonraki">&#10095;</button>
+      </div>
+      <div class="vehicle-slider__dots" id="vehicle-dots"></div>
       <div class="text-center mt-4 reveal">
         <a href="araclar.html" class="btn btn--outline-dark">Tüm Araçları Gör →</a>
       </div>
