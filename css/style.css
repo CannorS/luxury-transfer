@@ -468,8 +468,8 @@ p:last-child { margin-bottom: 0; }
 }
 
 .hero-form__select option {
-  background: var(--black);
-  color: var(--white);
+  background: #FFFFFF;
+  color: #1A1A1A;
 }
 
 /* --- Footer --- */
