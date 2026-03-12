@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initMobileMenu();
   initScrollAnimations();
+  initHeroSlider();
 });
 
 /* --- Theme Toggle (Dark / Light) --- */
@@ -82,6 +83,20 @@ function initScrollAnimations() {
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
   reveals.forEach(el => observer.observe(el));
+}
+
+/* --- Hero Slider --- */
+function initHeroSlider() {
+  const slides = document.querySelectorAll('.hero-slider__slide');
+  if (slides.length < 2) return;
+
+  let current = 0;
+
+  setInterval(() => {
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }, 2000);
 }
 
 /* --- Smooth scroll for anchor links --- */

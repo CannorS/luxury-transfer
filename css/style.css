@@ -354,6 +354,26 @@ p:last-child { margin-bottom: 0; }
   min-height: 40vh;
 }
 
+/* Hero Slider */
+.hero-slider {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-slider__slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.hero-slider__slide.active {
+  opacity: 1;
+}
+
 .hero__bg {
   position: absolute;
   inset: 0;
