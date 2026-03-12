@@ -416,7 +416,7 @@ p:last-child { margin-bottom: 0; }
   padding: 1.5rem 2rem;
   display: flex;
   gap: 1rem;
-  align-items: stretch;
+  align-items: flex-end;
   max-width: 700px;
   margin: 0 auto;
 }
@@ -430,7 +430,6 @@ p:last-child { margin-bottom: 0; }
 
 .hero-form__group--btn {
   flex: 0 0 auto;
-  justify-content: flex-end;
 }
 
 .hero-form__group--btn .btn {
@@ -438,6 +437,7 @@ p:last-child { margin-bottom: 0; }
   white-space: nowrap;
   font-size: 0.9rem;
   border-radius: var(--radius-sm);
+  height: 42px;
 }
 
 .hero-form__label {
