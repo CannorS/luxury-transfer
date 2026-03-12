@@ -1,0 +1,124 @@
+/* ========================================
+   LUXURY TRANSFER - Responsive
+   ======================================== */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+
+  .hero__title { font-size: 2.75rem; }
+
+  .grid--3 { grid-template-columns: repeat(2, 1fr); }
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
+
+  .steps { grid-template-columns: repeat(2, 1fr); }
+
+  .footer__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-bar__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-form {
+    flex-direction: column;
+  }
+
+  .hero-form__group {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+
+  .section { padding: 3.5rem 0; }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+
+  .hero__title { font-size: 2.25rem; }
+  .hero__subtitle { font-size: 1rem; }
+
+  .page-hero__title { font-size: 2rem; }
+
+  .section-title { font-size: 1.75rem; }
+
+  /* Header mobile */
+  .header__nav { display: none; }
+  .header__cta { display: none; }
+  .hamburger { display: flex; }
+
+  /* Grids */
+  .grid--2,
+  .grid--3,
+  .grid--4 {
+    grid-template-columns: 1fr;
+  }
+
+  .steps {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .stats-bar__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-bar__number { font-size: 2rem; }
+
+  /* Filter */
+  .filter-bar {
+    flex-direction: column;
+  }
+
+  .filter-bar__group {
+    min-width: 100%;
+  }
+
+  /* Booking */
+  .step-indicator__line { width: 30px; }
+  .step-indicator__circle { width: 34px; height: 34px; font-size: 0.8rem; }
+
+  .booking-option { padding: 1.5rem; }
+
+  /* CTA Banner */
+  .cta-banner__title { font-size: 1.75rem; }
+  .cta-banner__buttons { flex-direction: column; align-items: center; }
+
+  /* WhatsApp FAB */
+  .whatsapp-fab {
+    width: 52px;
+    height: 52px;
+    bottom: 1.25rem;
+    right: 1.25rem;
+  }
+  .whatsapp-fab svg { width: 26px; height: 26px; }
+
+  /* Modal */
+  .modal-overlay { padding: 1rem; }
+  .modal__image { height: 200px; }
+  .modal__body { padding: 1.25rem; }
+  .modal__title { font-size: 1.4rem; }
+}
+
+/* Small Mobile */
+@media (max-width: 375px) {
+  .hero__title { font-size: 1.85rem; }
+  .container { padding: 0 1rem; }
+  .hero-form { padding: 1rem; }
+  .step-indicator__line { width: 20px; }
+}

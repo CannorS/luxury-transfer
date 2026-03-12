@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Luxury Transfer online rezervasyon. İstanbul havalimanı transferi için hızlı ve kolay rezervasyon yapın.">
+  <title>Rezervasyon - Luxury Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header header--solid">
+    <div class="container header__inner">
+      <a href="index.html" class="header__logo">LUXURY <span>TRANSFER</span></a>
+      <nav class="header__nav">
+        <a href="index.html" class="header__link">Ana Sayfa</a>
+        <a href="araclar.html" class="header__link">Araçlarımız</a>
+        <a href="rezervasyon.html" class="header__link header__link--active">Rezervasyon</a>
+        <a href="hakkimizda.html" class="header__link">Hakkımızda</a>
+        <a href="iletisim.html" class="header__link">İletişim</a>
+      </nav>
+      <a href="rezervasyon.html" class="header__cta btn btn--gold btn--sm">Rezervasyon Yap</a>
+      <button class="hamburger" aria-label="Menüyü aç">
+        <span class="hamburger__line"></span>
+        <span class="hamburger__line"></span>
+        <span class="hamburger__line"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav">
+    <a href="index.html" class="mobile-nav__link">Ana Sayfa</a>
+    <a href="araclar.html" class="mobile-nav__link">Araçlarımız</a>
+    <a href="rezervasyon.html" class="mobile-nav__link">Rezervasyon</a>
+    <a href="hakkimizda.html" class="mobile-nav__link">Hakkımızda</a>
+    <a href="iletisim.html" class="mobile-nav__link">İletişim</a>
+  </div>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="page-hero__content">
+      <h1 class="page-hero__title">Rezervasyon</h1>
+      <p class="page-hero__subtitle">Birkaç adımda lüks transfer rezervasyonunuzu tamamlayın</p>
+    </div>
+  </section>
+
+  <!-- Booking Wizard -->
+  <section class="section" id="booking-wizard">
+    <div class="container" style="max-width:800px">
+
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step-indicator__step">
+          <div class="step-indicator__circle step-indicator__circle--active">1</div>
+        </div>
+        <div class="step-indicator__line"></div>
+        <div class="step-indicator__step">
+          <div class="step-indicator__circle">2</div>
+        </div>
+        <div class="step-indicator__line"></div>
+        <div class="step-indicator__step">
+          <div class="step-indicator__circle">3</div>
+        </div>
+        <div class="step-indicator__line"></div>
+        <div class="step-indicator__step">
+          <div class="step-indicator__circle">4</div>
+        </div>
+        <div class="step-indicator__line"></div>
+        <div class="step-indicator__step">
+          <div class="step-indicator__circle">5</div>
+        </div>
+        <div class="step-indicator__line"></div>
+        <div class="step-indicator__step">
+          <div class="step-indicator__circle">6</div>
+        </div>
+      </div>
+
+      <!-- Booking Content -->
+      <div id="booking-content"></div>
+
+      <!-- Navigation Buttons -->
+      <div class="flex--between mt-4">
+        <button class="btn btn--outline-dark" id="prev-btn" onclick="prevStep()" style="visibility:hidden">← Geri</button>
+        <button class="btn btn--primary" id="next-btn" onclick="nextStep()">İleri →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand">LUXURY <span>TRANSFER</span></div>
+          <p class="footer__desc">İstanbul'un lider lüks havalimanı transfer hizmeti.</p>
+        </div>
+        <div>
+          <h4 class="footer__heading">Sayfalar</h4>
+          <a href="index.html" class="footer__link">Ana Sayfa</a>
+          <a href="araclar.html" class="footer__link">Araçlarımız</a>
+          <a href="rezervasyon.html" class="footer__link">Rezervasyon</a>
+          <a href="hakkimizda.html" class="footer__link">Hakkımızda</a>
+          <a href="iletisim.html" class="footer__link">İletişim</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">Hizmetler</h4>
+          <a href="rezervasyon.html" class="footer__link">Havalimanı Transfer</a>
+          <a href="rezervasyon.html" class="footer__link">Saatlik Kiralama</a>
+          <a href="rezervasyon.html" class="footer__link">VIP Transfer</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">İletişim</h4>
+          <div class="footer__contact-item">
+            <span class="footer__contact-icon">📞</span>
+            <span>+90 555 123 45 67</span>
+          </div>
+          <div class="footer__contact-item">
+            <span class="footer__contact-icon">📧</span>
+            <span>info@luxurytransfer.com.tr</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">&copy; 2026 Luxury Transfer. Tüm hakları saklıdır.</div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <a href="#" onclick="openWhatsAppGeneral(); return false;" class="whatsapp-fab" aria-label="WhatsApp ile iletişim">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.682-1.415A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.312-2.774.838.87-2.675-.342-.462A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+  </a>
+
+  <script src="js/main.js"></script>
+  <script src="js/vehicles.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/whatsapp.js"></script>
+</body>
+</html>

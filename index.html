@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="İstanbul havalimanı lüks transfer hizmeti. Şoförlü Mercedes, BMW araçlarla VIP havalimanı transferi. IST ve SAW havalimanlarından güvenli, konforlu transfer.">
+  <meta property="og:title" content="Luxury Transfer - İstanbul Lüks Havalimanı Transfer">
+  <meta property="og:description" content="İstanbul'un en prestijli havalimanı transfer hizmeti. Lüks araçlar, profesyonel şoförler.">
+  <meta property="og:type" content="website">
+  <title>Luxury Transfer - İstanbul Lüks Havalimanı Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header header--transparent">
+    <div class="container header__inner">
+      <a href="index.html" class="header__logo">LUXURY <span>TRANSFER</span></a>
+      <nav class="header__nav">
+        <a href="index.html" class="header__link header__link--active">Ana Sayfa</a>
+        <a href="araclar.html" class="header__link">Araçlarımız</a>
+        <a href="rezervasyon.html" class="header__link">Rezervasyon</a>
+        <a href="hakkimizda.html" class="header__link">Hakkımızda</a>
+        <a href="iletisim.html" class="header__link">İletişim</a>
+      </nav>
+      <a href="rezervasyon.html" class="header__cta btn btn--gold btn--sm">Rezervasyon Yap</a>
+      <button class="hamburger" aria-label="Menüyü aç">
+        <span class="hamburger__line"></span>
+        <span class="hamburger__line"></span>
+        <span class="hamburger__line"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav">
+    <a href="index.html" class="mobile-nav__link">Ana Sayfa</a>
+    <a href="araclar.html" class="mobile-nav__link">Araçlarımız</a>
+    <a href="rezervasyon.html" class="mobile-nav__link">Rezervasyon</a>
+    <a href="hakkimizda.html" class="mobile-nav__link">Hakkımızda</a>
+    <a href="iletisim.html" class="mobile-nav__link">İletişim</a>
+    <a href="rezervasyon.html" class="btn btn--gold" style="margin-top:1rem">Rezervasyon Yap</a>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__bg" style="background-image:linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)"></div>
+    <div class="hero__overlay"></div>
+    <div class="hero__content">
+      <div class="hero__badge">Premium Transfer Hizmeti</div>
+      <h1 class="hero__title">İstanbul'un Lüks<br>Transfer Deneyimi</h1>
+      <p class="hero__subtitle">Havalimanı transferlerinizde konfor, güvenlik ve zarafeti bir arada yaşayın. Profesyonel şoförlerimiz ve lüks araç filomuzla hizmetinizdeyiz.</p>
+
+      <form class="hero-form" onsubmit="event.preventDefault(); window.location.href='rezervasyon.html?airport='+this.airport.value+'&service='+this.service.value;">
+        <div class="hero-form__group">
+          <label class="hero-form__label">Havalimanı</label>
+          <select name="airport" class="hero-form__select">
+            <option value="IST">İstanbul Havalimanı (IST)</option>
+            <option value="SAW">Sabiha Gökçen (SAW)</option>
+          </select>
+        </div>
+        <div class="hero-form__group">
+          <label class="hero-form__label">Tarih</label>
+          <input type="date" name="date" class="hero-form__input">
+        </div>
+        <div class="hero-form__group">
+          <label class="hero-form__label">Hizmet Tipi</label>
+          <select name="service" class="hero-form__select">
+            <option value="perKm">KM Bazlı Transfer</option>
+            <option value="hourly">Saatlik Kiralama</option>
+          </select>
+        </div>
+        <div class="hero-form__group">
+          <button type="submit" class="btn btn--gold btn--lg" style="width:100%">Ara</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Hizmetler -->
+  <section class="section" id="hizmetler">
+    <div class="container">
+      <h2 class="section-title reveal">Hizmetlerimiz</h2>
+      <p class="section-subtitle reveal">İstanbul'da ihtiyacınıza uygun lüks transfer çözümleri sunuyoruz.</p>
+      <div class="grid grid--3">
+        <div class="service-card reveal">
+          <div class="service-card__icon">✈️</div>
+          <h3 class="service-card__title">Havalimanı Transfer</h3>
+          <p class="service-card__text">İstanbul Havalimanı ve Sabiha Gökçen'den şehrin her noktasına güvenli ve konforlu transfer. Uçuş takibi ile karşılama.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-card__icon">⏱️</div>
+          <h3 class="service-card__title">Saatlik Kiralama</h3>
+          <p class="service-card__text">Toplantılar, şehir turları ve özel etkinlikler için şoförlü lüks araç kiralama. Minimum 3 saat.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-card__icon">⭐</div>
+          <h3 class="service-card__title">VIP Transfer</h3>
+          <p class="service-card__text">Özel karşılama, isim tabelası, mini bar ve kişiselleştirilmiş hizmet ile unutulmaz bir deneyim.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Öne Çıkan Araçlar -->
+  <section class="section section--gray">
+    <div class="container">
+      <h2 class="section-title reveal">Araç Filomuz</h2>
+      <p class="section-subtitle reveal">Lüks ve konfor standartlarını karşılayan premium araçlarımız.</p>
+      <div class="grid grid--3" id="featured-vehicles"></div>
+      <div class="text-center mt-4 reveal">
+        <a href="araclar.html" class="btn btn--outline-dark">Tüm Araçları Gör →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nasıl Çalışır -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title reveal">Nasıl Çalışır?</h2>
+      <p class="section-subtitle reveal">4 kolay adımda lüks transfer deneyiminizi başlatın.</p>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step__number">1</div>
+          <h4 class="step__title">Araç Seçin</h4>
+          <p class="step__text">İhtiyacınıza uygun lüks aracı filomuzdan seçin.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step__number">2</div>
+          <h4 class="step__title">Rezervasyon Yapın</h4>
+          <p class="step__text">Tarih, saat ve rota bilgilerinizi girerek rezervasyonunuzu tamamlayın.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step__number">3</div>
+          <h4 class="step__title">Karşılanın</h4>
+          <p class="step__text">Profesyonel şoförünüz sizi isim tabelasıyla karşılasın.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step__number">4</div>
+          <h4 class="step__title">Yolculuğun Keyfini Çıkarın</h4>
+          <p class="step__text">Konforlu ve güvenli yolculuğunuzun tadını çıkarın.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Müşteri Yorumları -->
+  <section class="section section--gray">
+    <div class="container">
+      <h2 class="section-title reveal">Müşterilerimiz Ne Diyor?</h2>
+      <p class="section-subtitle reveal">Binlerce memnun müşterimizden bazı yorumlar.</p>
+      <div class="grid grid--3">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-card__quote">"</div>
+          <p class="testimonial-card__text">İstanbul Havalimanı'ndan otelimize kadar mükemmel bir deneyimdi. Şoför çok profesyonel, araç tertemizdi. Kesinlikle tavsiye ederim.</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">AY</div>
+            <div>
+              <div class="testimonial-card__name">Ahmet Yılmaz</div>
+              <div class="testimonial-card__role">İş Seyahati</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-card__quote">"</div>
+          <p class="testimonial-card__text">Ailece İstanbul'a geldiğimizde Vito VIP ile karşılandık. Çocuklar için koltuk bile hazırlamışlardı. Harika bir hizmet anlayışı!</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">EK</div>
+            <div>
+              <div class="testimonial-card__name">Elif Kaya</div>
+              <div class="testimonial-card__role">Aile Tatili</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-card__quote">"</div>
+          <p class="testimonial-card__text">Şirketimizin tüm VIP misafir transferlerini Luxury Transfer ile yapıyoruz. Her seferinde kusursuz hizmet. Fiyat-performans dengesi mükemmel.</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">MÖ</div>
+            <div>
+              <div class="testimonial-card__name">Mehmet Özkan</div>
+              <div class="testimonial-card__role">Kurumsal Müşteri</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <div class="container">
+      <h2 class="cta-banner__title reveal">Hemen Rezervasyon Yapın</h2>
+      <p class="cta-banner__text reveal">İstanbul'da lüks ve konforlu transfer deneyimi sizi bekliyor.</p>
+      <div class="cta-banner__buttons reveal">
+        <a href="rezervasyon.html" class="btn btn--gold btn--lg">Online Rezervasyon</a>
+        <a href="#" onclick="openWhatsAppGeneral(); return false;" class="btn btn--whatsapp btn--lg">WhatsApp ile İletişim</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand">LUXURY <span>TRANSFER</span></div>
+          <p class="footer__desc">İstanbul'un lider lüks havalimanı transfer hizmeti. Güvenli, konforlu ve zarafet dolu yolculuklar için yanınızdayız.</p>
+          <div class="footer__social">
+            <a href="#" class="footer__social-link" aria-label="Instagram">IG</a>
+            <a href="#" class="footer__social-link" aria-label="Facebook">FB</a>
+            <a href="#" class="footer__social-link" aria-label="Twitter">TW</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__heading">Sayfalar</h4>
+          <a href="index.html" class="footer__link">Ana Sayfa</a>
+          <a href="araclar.html" class="footer__link">Araçlarımız</a>
+          <a href="rezervasyon.html" class="footer__link">Rezervasyon</a>
+          <a href="hakkimizda.html" class="footer__link">Hakkımızda</a>
+          <a href="iletisim.html" class="footer__link">İletişim</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">Hizmetler</h4>
+          <a href="rezervasyon.html" class="footer__link">Havalimanı Transfer</a>
+          <a href="rezervasyon.html" class="footer__link">Saatlik Kiralama</a>
+          <a href="rezervasyon.html" class="footer__link">VIP Transfer</a>
+          <a href="araclar.html" class="footer__link">Araç Filosu</a>
+        </div>
+        <div>
+          <h4 class="footer__heading">İletişim</h4>
+          <div class="footer__contact-item">
+            <span class="footer__contact-icon">📍</span>
+            <span>Levent, İstanbul, Türkiye</span>
+          </div>
+          <div class="footer__contact-item">
+            <span class="footer__contact-icon">📞</span>
+            <span>+90 555 123 45 67</span>
+          </div>
+          <div class="footer__contact-item">
+            <span class="footer__contact-icon">📧</span>
+            <span>info@luxurytransfer.com.tr</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        &copy; 2026 Luxury Transfer. Tüm hakları saklıdır.
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB -->
+  <a href="#" onclick="openWhatsAppGeneral(); return false;" class="whatsapp-fab" aria-label="WhatsApp ile iletişim">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.682-1.415A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.312-2.774.838.87-2.675-.342-.462A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+  </a>
+
+  <script src="js/main.js"></script>
+  <script src="js/vehicles.js"></script>
+  <script src="js/whatsapp.js"></script>
+</body>
+</html>
