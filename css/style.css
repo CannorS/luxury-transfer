@@ -429,13 +429,15 @@ p:last-child { margin-bottom: 0; }
 }
 
 .hero-form__group--btn {
+  flex: 0 0 auto;
   justify-content: flex-end;
 }
 
 .hero-form__group--btn .btn {
-  width: 100%;
-  height: auto;
+  padding: 0.7rem 1.75rem;
   white-space: nowrap;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
 }
 
 .hero-form__label {
