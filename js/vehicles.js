@@ -140,11 +140,11 @@ function renderVehicleCard(v, showBookBtn = true) {
 
 /* Fleet slider - home page */
 const vehicleImages = {
-  'mercedes-s-class': 'https://images.unsplash.com/photo-1525499114766-eeaf451f8a5e?w=800&fit=crop&auto=format',
-  'bmw-7-series': 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=800&fit=crop&auto=format',
-  'mercedes-e-class': 'https://images.unsplash.com/photo-1559167628-9394a8576f33?w=800&fit=crop&auto=format',
-  'mercedes-vito-vip': 'https://images.unsplash.com/photo-1578557904035-f68542b3770e?w=800&fit=crop&auto=format',
-  'mercedes-sprinter-vip': 'https://images.unsplash.com/photo-1601548994922-d68e38896a2d?w=800&fit=crop&auto=format'
+  'mercedes-s-class': 'images/vehicles/mercedes-s-class.webp',
+  'bmw-7-series': 'images/vehicles/bmw-7-series.webp',
+  'mercedes-e-class': 'images/vehicles/mercedes-e-class.webp',
+  'mercedes-vito-vip': 'images/vehicles/mercedes-vito-vip.webp',
+  'mercedes-sprinter-vip': 'images/vehicles/mercedes-sprinter-vip.webp'
 };
 
 function renderFleetCard(v) {
