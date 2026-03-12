@@ -139,52 +139,22 @@ function renderVehicleCard(v, showBookBtn = true) {
 }
 
 /* Fleet slider - home page */
-function getFleetSVG(cls) {
-  if (cls === 'vip-van') {
-    return `<svg viewBox="0 0 260 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="30" width="200" height="50" rx="8" fill="#1A1A1A"/>
-      <rect x="30" y="20" width="120" height="35" rx="6" fill="#2D2D2D"/>
-      <rect x="35" y="24" width="30" height="20" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <rect x="70" y="24" width="30" height="20" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <rect x="105" y="24" width="30" height="20" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <circle cx="60" cy="82" r="10" fill="#333"/><circle cx="60" cy="82" r="6" fill="#555"/>
-      <circle cx="180" cy="82" r="10" fill="#333"/><circle cx="180" cy="82" r="6" fill="#555"/>
-      <rect x="200" y="45" width="25" height="12" rx="3" fill="#e74c3c" opacity="0.6"/>
-    </svg>`;
-  }
-  if (cls === 'sprinter') {
-    return `<svg viewBox="0 0 280 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="15" y="28" width="235" height="58" rx="8" fill="#1A1A1A"/>
-      <rect x="25" y="15" width="140" height="42" rx="6" fill="#2D2D2D"/>
-      <rect x="30" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <rect x="63" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <rect x="96" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <rect x="129" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
-      <circle cx="65" cy="90" r="12" fill="#333"/><circle cx="65" cy="90" r="7" fill="#555"/>
-      <circle cx="205" cy="90" r="12" fill="#333"/><circle cx="205" cy="90" r="7" fill="#555"/>
-      <rect x="230" y="50" width="25" height="14" rx="3" fill="#e74c3c" opacity="0.6"/>
-    </svg>`;
-  }
-  // sedan (executive)
-  return `<svg viewBox="0 0 260 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M40 55 Q45 30 80 25 L160 22 Q200 22 210 40 L230 55 Z" fill="#2D2D2D"/>
-    <rect x="25" y="52" width="215" height="25" rx="6" fill="#1A1A1A"/>
-    <rect x="75" y="28" width="40" height="22" rx="4" fill="#5B9BD5" opacity="0.3"/>
-    <rect x="120" y="26" width="45" height="22" rx="4" fill="#5B9BD5" opacity="0.3"/>
-    <rect x="170" y="28" width="35" height="20" rx="4" fill="#5B9BD5" opacity="0.3"/>
-    <circle cx="70" cy="78" r="11" fill="#333"/><circle cx="70" cy="78" r="7" fill="#555"/>
-    <circle cx="195" cy="78" r="11" fill="#333"/><circle cx="195" cy="78" r="7" fill="#555"/>
-    <rect x="215" y="55" width="22" height="8" rx="2" fill="#e74c3c" opacity="0.6"/>
-    <rect x="28" y="55" width="18" height="6" rx="2" fill="#f1c40f" opacity="0.5"/>
-  </svg>`;
-}
+const vehicleImages = {
+  'mercedes-s-class': 'https://images.unsplash.com/photo-1525499114766-eeaf451f8a5e?w=800&fit=crop&auto=format',
+  'bmw-7-series': 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=800&fit=crop&auto=format',
+  'mercedes-e-class': 'https://images.unsplash.com/photo-1559167628-9394a8576f33?w=800&fit=crop&auto=format',
+  'mercedes-vito-vip': 'https://images.unsplash.com/photo-1578557904035-f68542b3770e?w=800&fit=crop&auto=format',
+  'mercedes-sprinter-vip': 'https://images.unsplash.com/photo-1601548994922-d68e38896a2d?w=800&fit=crop&auto=format'
+};
 
 function renderFleetCard(v) {
   return `
     <div class="fleet-card">
       <h4 class="fleet-card__name">${v.name}</h4>
       <p class="fleet-card__desc">${v.classLabel} · ${v.amenities.slice(0, 3).join(', ')}</p>
-      <div class="fleet-card__image">${getFleetSVG(v.class)}</div>
+      <div class="fleet-card__image">
+        <img src="${vehicleImages[v.id]}" alt="${v.name}" draggable="false">
+      </div>
       <div class="fleet-card__specs">
         <span class="fleet-card__spec">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
