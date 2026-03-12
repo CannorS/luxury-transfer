@@ -111,19 +111,20 @@
     </div>
   </section>
 
-  <!-- Öne Çıkan Araçlar - Slider -->
-  <section class="section section--gray">
+  <!-- Araç Filomuz -->
+  <section class="section">
     <div class="container">
-      <h2 class="section-title reveal">Araç Filomuz</h2>
-      <p class="section-subtitle reveal">Lüks ve konfor standartlarını karşılayan premium araçlarımız.</p>
-      <div class="vehicle-slider reveal">
-        <button class="vehicle-slider__arrow vehicle-slider__arrow--left" onclick="slideVehicles(-1)" aria-label="Önceki">&#10094;</button>
-        <div class="vehicle-slider__track" id="featured-vehicles"></div>
-        <button class="vehicle-slider__arrow vehicle-slider__arrow--right" onclick="slideVehicles(1)" aria-label="Sonraki">&#10095;</button>
+      <div class="fleet-header reveal">
+        <h2 class="fleet-header__title">Araç Filomuz</h2>
+        <a href="araclar.html" class="fleet-header__link">Tüm Araçlar →</a>
       </div>
-      <div class="vehicle-slider__dots" id="vehicle-dots"></div>
-      <div class="text-center mt-4 reveal">
-        <a href="araclar.html" class="btn btn--outline-dark">Tüm Araçları Gör →</a>
+      <div class="fleet-slider reveal">
+        <div class="fleet-slider__track" id="featured-vehicles"></div>
+      </div>
+      <div class="fleet-slider__nav">
+        <button class="fleet-slider__arrow" onclick="slideFleet(-1)" aria-label="Önceki">&#10094;</button>
+        <div class="fleet-slider__dots" id="fleet-dots"></div>
+        <button class="fleet-slider__arrow" onclick="slideFleet(1)" aria-label="Sonraki">&#10095;</button>
       </div>
     </div>
   </section>

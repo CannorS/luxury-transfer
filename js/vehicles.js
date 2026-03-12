@@ -138,64 +138,116 @@ function renderVehicleCard(v, showBookBtn = true) {
     </div>`;
 }
 
-/* Render featured vehicles on home page (slider) */
-let vehicleSliderIndex = 0;
+/* Fleet slider - home page */
+let fleetIndex = 0;
+
+function getFleetSVG(cls) {
+  if (cls === 'vip-van') {
+    return `<svg viewBox="0 0 260 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="30" width="200" height="50" rx="8" fill="#1A1A1A"/>
+      <rect x="30" y="20" width="120" height="35" rx="6" fill="#2D2D2D"/>
+      <rect x="35" y="24" width="30" height="20" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <rect x="70" y="24" width="30" height="20" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <rect x="105" y="24" width="30" height="20" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <circle cx="60" cy="82" r="10" fill="#333"/><circle cx="60" cy="82" r="6" fill="#555"/>
+      <circle cx="180" cy="82" r="10" fill="#333"/><circle cx="180" cy="82" r="6" fill="#555"/>
+      <rect x="200" y="45" width="25" height="12" rx="3" fill="#e74c3c" opacity="0.6"/>
+    </svg>`;
+  }
+  if (cls === 'sprinter') {
+    return `<svg viewBox="0 0 280 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="28" width="235" height="58" rx="8" fill="#1A1A1A"/>
+      <rect x="25" y="15" width="140" height="42" rx="6" fill="#2D2D2D"/>
+      <rect x="30" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <rect x="63" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <rect x="96" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <rect x="129" y="20" width="28" height="24" rx="3" fill="#5B9BD5" opacity="0.3"/>
+      <circle cx="65" cy="90" r="12" fill="#333"/><circle cx="65" cy="90" r="7" fill="#555"/>
+      <circle cx="205" cy="90" r="12" fill="#333"/><circle cx="205" cy="90" r="7" fill="#555"/>
+      <rect x="230" y="50" width="25" height="14" rx="3" fill="#e74c3c" opacity="0.6"/>
+    </svg>`;
+  }
+  // sedan (executive)
+  return `<svg viewBox="0 0 260 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M40 55 Q45 30 80 25 L160 22 Q200 22 210 40 L230 55 Z" fill="#2D2D2D"/>
+    <rect x="25" y="52" width="215" height="25" rx="6" fill="#1A1A1A"/>
+    <rect x="75" y="28" width="40" height="22" rx="4" fill="#5B9BD5" opacity="0.3"/>
+    <rect x="120" y="26" width="45" height="22" rx="4" fill="#5B9BD5" opacity="0.3"/>
+    <rect x="170" y="28" width="35" height="20" rx="4" fill="#5B9BD5" opacity="0.3"/>
+    <circle cx="70" cy="78" r="11" fill="#333"/><circle cx="70" cy="78" r="7" fill="#555"/>
+    <circle cx="195" cy="78" r="11" fill="#333"/><circle cx="195" cy="78" r="7" fill="#555"/>
+    <rect x="215" y="55" width="22" height="8" rx="2" fill="#e74c3c" opacity="0.6"/>
+    <rect x="28" y="55" width="18" height="6" rx="2" fill="#f1c40f" opacity="0.5"/>
+  </svg>`;
+}
+
+function renderFleetCard(v) {
+  return `
+    <div class="fleet-card">
+      <h4 class="fleet-card__name">${v.name}</h4>
+      <p class="fleet-card__desc">${v.classLabel} · ${v.amenities.slice(0, 3).join(', ')}</p>
+      <div class="fleet-card__image">${getFleetSVG(v.class)}</div>
+      <div class="fleet-card__specs">
+        <span class="fleet-card__spec">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          ${v.passengers} Yolcu
+        </span>
+        <span class="fleet-card__spec">
+          <svg viewBox="0 0 24 24"><path d="M17 6h-2V3H9v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM11 5h2v1h-2V5z"/></svg>
+          ${v.luggage} Bagaj
+        </span>
+      </div>
+    </div>`;
+}
 
 function renderFeaturedVehicles() {
   const container = document.getElementById('featured-vehicles');
   if (!container) return;
-  container.innerHTML = vehicles.map(v => renderVehicleCard(v)).join('');
-  renderVehicleDots();
-  updateVehicleSlider();
+  container.innerHTML = vehicles.map(v => renderFleetCard(v)).join('');
+  updateFleetSlider();
 }
 
-function getVisibleCount() {
-  if (window.innerWidth <= 768) return 1;
-  if (window.innerWidth <= 1024) return 2;
-  return 3;
+function getFleetVisible() {
+  if (window.innerWidth <= 480) return 1;
+  if (window.innerWidth <= 768) return 2;
+  if (window.innerWidth <= 1024) return 3;
+  return 4;
 }
 
-function slideVehicles(dir) {
-  const total = vehicles.length;
-  const visible = getVisibleCount();
-  const maxIndex = total - visible;
-  vehicleSliderIndex = Math.max(0, Math.min(vehicleSliderIndex + dir, maxIndex));
-  updateVehicleSlider();
+function slideFleet(dir) {
+  const visible = getFleetVisible();
+  const maxIndex = vehicles.length - visible;
+  fleetIndex = Math.max(0, Math.min(fleetIndex + dir, maxIndex));
+  updateFleetSlider();
 }
 
-function goToVehicleSlide(index) {
-  vehicleSliderIndex = index;
-  updateVehicleSlider();
+function goToFleetSlide(i) {
+  fleetIndex = i;
+  updateFleetSlider();
 }
 
-function updateVehicleSlider() {
+function updateFleetSlider() {
   const track = document.getElementById('featured-vehicles');
   if (!track) return;
-  const card = track.querySelector('.vehicle-card');
-  if (!card) return;
-  const cardWidth = card.offsetWidth + 24; // 24 = 2 * 0.75rem margin
-  track.style.transform = `translateX(-${vehicleSliderIndex * cardWidth}px)`;
-  renderVehicleDots();
-}
+  const visible = getFleetVisible();
+  const pct = (fleetIndex / vehicles.length) * 100;
+  track.style.transform = `translateX(-${pct}%)`;
 
-function renderVehicleDots() {
-  const dotsContainer = document.getElementById('vehicle-dots');
+  const dotsContainer = document.getElementById('fleet-dots');
   if (!dotsContainer) return;
-  const total = vehicles.length;
-  const visible = getVisibleCount();
-  const maxIndex = total - visible;
+  const maxIndex = vehicles.length - visible;
   let dots = '';
   for (let i = 0; i <= maxIndex; i++) {
-    dots += `<button class="vehicle-slider__dot ${i === vehicleSliderIndex ? 'active' : ''}" onclick="goToVehicleSlide(${i})" aria-label="Slide ${i + 1}"></button>`;
+    dots += `<button class="fleet-slider__dot ${i === fleetIndex ? 'active' : ''}" onclick="goToFleetSlide(${i})"></button>`;
   }
   dotsContainer.innerHTML = dots;
 }
 
 window.addEventListener('resize', () => {
-  const visible = getVisibleCount();
+  const visible = getFleetVisible();
   const maxIndex = vehicles.length - visible;
-  if (vehicleSliderIndex > maxIndex) vehicleSliderIndex = Math.max(0, maxIndex);
-  updateVehicleSlider();
+  if (fleetIndex > maxIndex) fleetIndex = Math.max(0, maxIndex);
+  updateFleetSlider();
 });
 
 /* Render all vehicles on fleet page */
