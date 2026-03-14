@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /cron/
+
+Sitemap: https://luxuryairportshuttle.com/sitemap.xml
