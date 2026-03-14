@@ -76,3 +76,10 @@ function openWhatsAppGeneral() {
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
+
+/* WhatsApp - Tour inquiry */
+function openWhatsAppTour(tourName) {
+  const msg = `Merhaba, "${tourName}" turu hakkında detaylı bilgi ve rezervasyon yapmak istiyorum.`;
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}

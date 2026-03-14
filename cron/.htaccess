@@ -1,0 +1,2 @@
+# cron klasörüne dışarıdan erişimi engelle
+Deny from all

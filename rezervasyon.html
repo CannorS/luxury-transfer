@@ -11,21 +11,21 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/booking-page.css">
 </head>
 <body>
 
   <!-- Header -->
   <header class="header header--solid">
     <div class="container header__inner">
-      <a href="index.html" class="header__logo">LUXURY <span>TRANSFER</span></a>
+      <a href="index.html" class="header__logo"><img src="images/logo/logo.webp" alt="Luxury Transfer"></a>
       <nav class="header__nav">
         <a href="index.html" class="header__link">Ana Sayfa</a>
-        <a href="araclar.html" class="header__link">Araçlarımız</a>
-        <a href="rezervasyon.html" class="header__link header__link--active">Rezervasyon</a>
         <a href="hakkimizda.html" class="header__link">Hakkımızda</a>
+        <a href="araclar.html" class="header__link">Araçlarımız</a>
+        <a href="turlar.html" class="header__link">Turlar</a>
         <a href="iletisim.html" class="header__link">İletişim</a>
       </nav>
-      <a href="rezervasyon.html" class="header__cta btn btn--primary btn--sm">Rezervasyon Yap</a>
       <button class="hamburger" aria-label="Menüyü aç">
         <span class="hamburger__line"></span>
         <span class="hamburger__line"></span>
@@ -37,58 +37,96 @@
   <!-- Mobile Nav -->
   <div class="mobile-nav">
     <a href="index.html" class="mobile-nav__link">Ana Sayfa</a>
-    <a href="araclar.html" class="mobile-nav__link">Araçlarımız</a>
-    <a href="rezervasyon.html" class="mobile-nav__link">Rezervasyon</a>
     <a href="hakkimizda.html" class="mobile-nav__link">Hakkımızda</a>
+    <a href="araclar.html" class="mobile-nav__link">Araçlarımız</a>
+    <a href="turlar.html" class="mobile-nav__link">Turlar</a>
     <a href="iletisim.html" class="mobile-nav__link">İletişim</a>
   </div>
 
-  <!-- Page Hero -->
-  <section class="page-hero">
-    <div class="page-hero__content">
-      <h1 class="page-hero__title">Rezervasyon</h1>
-      <p class="page-hero__subtitle">Birkaç adımda lüks transfer rezervasyonunuzu tamamlayın</p>
+  <!-- Step Indicator -->
+  <section class="bp-steps">
+    <div class="container">
+      <div class="bp-steps__bar">
+        <div class="bp-steps__item active" data-step="1">
+          <span class="bp-steps__num">1</span>
+          <span class="bp-steps__text">Araç & Hizmetler</span>
+        </div>
+        <div class="bp-steps__line"></div>
+        <div class="bp-steps__item" data-step="2">
+          <span class="bp-steps__num">2</span>
+          <span class="bp-steps__text">Yolcu & Ödeme</span>
+        </div>
+        <div class="bp-steps__line"></div>
+        <div class="bp-steps__item" data-step="3">
+          <span class="bp-steps__num">3</span>
+          <span class="bp-steps__text">Rezervasyon</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Booking Wizard -->
-  <section class="section" id="booking-wizard">
-    <div class="container" style="max-width:800px">
+  <!-- Main Content -->
+  <section class="bp-main">
+    <div class="container">
+      <div class="bp-layout">
 
-      <!-- Step Indicator -->
-      <div class="step-indicator">
-        <div class="step-indicator__step">
-          <div class="step-indicator__circle step-indicator__circle--active">1</div>
+        <!-- Sol: Filtre + Araç Listesi -->
+        <div class="bp-content-area">
+          <div class="bp-filters" id="bp-filters">
+            <div class="bp-filters__group">
+              <label class="bp-filters__label">Yolcu</label>
+              <select class="bp-filters__select" id="filter-pax" onchange="applyFilters()">
+                <option value="0">Tümü</option>
+                <option value="2">2+ Kişi</option>
+                <option value="4">4+ Kişi</option>
+                <option value="6">6+ Kişi</option>
+                <option value="12">12+ Kişi</option>
+              </select>
+            </div>
+            <div class="bp-filters__group">
+              <label class="bp-filters__label">Bagaj</label>
+              <select class="bp-filters__select" id="filter-luggage" onchange="applyFilters()">
+                <option value="0">Tümü</option>
+                <option value="2">2+ Adet</option>
+                <option value="4">4+ Adet</option>
+                <option value="6">6+ Adet</option>
+                <option value="12">12+ Adet</option>
+              </select>
+            </div>
+            <div class="bp-filters__group">
+              <label class="bp-filters__label">Fiyat</label>
+              <select class="bp-filters__select" id="filter-sort" onchange="applyFilters()">
+                <option value="asc">Ucuzdan Pahalıya</option>
+                <option value="desc">Pahalıdan Ucuza</option>
+              </select>
+            </div>
+            <div class="bp-filters__group">
+              <label class="bp-filters__label">Para Birimi</label>
+              <select class="bp-filters__select" id="filter-currency" onchange="changeCurrency()">
+                <option value="TRY">₺ TRY</option>
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+              </select>
+            </div>
+          </div>
+          <div class="bp-vehicles" id="bp-vehicles">
+            <!-- JS ile doldurulacak -->
+          </div>
         </div>
-        <div class="step-indicator__line"></div>
-        <div class="step-indicator__step">
-          <div class="step-indicator__circle">2</div>
-        </div>
-        <div class="step-indicator__line"></div>
-        <div class="step-indicator__step">
-          <div class="step-indicator__circle">3</div>
-        </div>
-        <div class="step-indicator__line"></div>
-        <div class="step-indicator__step">
-          <div class="step-indicator__circle">4</div>
-        </div>
-        <div class="step-indicator__line"></div>
-        <div class="step-indicator__step">
-          <div class="step-indicator__circle">5</div>
-        </div>
-        <div class="step-indicator__line"></div>
-        <div class="step-indicator__step">
-          <div class="step-indicator__circle">6</div>
-        </div>
-      </div>
 
-      <!-- Booking Content -->
-      <div id="booking-content"></div>
+        <!-- Sağ: Rezervasyon Özeti -->
+        <aside class="bp-sidebar">
+          <div class="bp-summary" id="bp-summary">
+            <div class="bp-summary__header">
+              <h3 class="bp-summary__title">Rezervasyon</h3>
+              <button class="bp-summary__edit" onclick="window.location.href='index.html'">Düzenle</button>
+            </div>
+            <div class="bp-summary__body" id="bp-summary-body">
+              <!-- JS ile doldurulacak -->
+            </div>
+          </div>
+        </aside>
 
-      <!-- Navigation Buttons -->
-      <div class="flex--between mt-4">
-        <button class="btn btn--outline-dark" id="prev-btn" onclick="prevStep()" style="visibility:hidden">← Geri</button>
-        <button class="btn btn--primary" id="next-btn" onclick="nextStep()">İleri →</button>
       </div>
     </div>
   </section>
@@ -98,15 +136,15 @@
     <div class="container">
       <div class="footer__grid">
         <div>
-          <div class="footer__brand">LUXURY <span>TRANSFER</span></div>
+          <div class="footer__brand"><img src="images/logo/logo.webp" alt="Luxury Transfer"></div>
           <p class="footer__desc">İstanbul'un lider lüks havalimanı transfer hizmeti.</p>
         </div>
         <div>
           <h4 class="footer__heading">Sayfalar</h4>
           <a href="index.html" class="footer__link">Ana Sayfa</a>
-          <a href="araclar.html" class="footer__link">Araçlarımız</a>
-          <a href="rezervasyon.html" class="footer__link">Rezervasyon</a>
           <a href="hakkimizda.html" class="footer__link">Hakkımızda</a>
+          <a href="araclar.html" class="footer__link">Araçlarımız</a>
+          <a href="turlar.html" class="footer__link">Turlar</a>
           <a href="iletisim.html" class="footer__link">İletişim</a>
         </div>
         <div>
@@ -131,6 +169,72 @@
     </div>
   </footer>
 
+  <!-- Ek Hizmetler Modal -->
+  <div class="extras-overlay" id="extras-overlay">
+    <div class="extras-modal">
+      <div class="extras-modal__header">
+        <h3 class="extras-modal__title">Ek Hizmetler</h3>
+        <button class="extras-modal__close" onclick="closeExtras()">&times;</button>
+      </div>
+      <div class="extras-modal__body">
+        <!-- Çocuk Koltuğu -->
+        <div class="extras-item">
+          <div class="extras-item__icon">🪑</div>
+          <div class="extras-item__info">
+            <div class="extras-item__name">Çocuk Koltuğu</div>
+            <div class="extras-item__desc">9-25 Kg ve 0-7 Yaş Arası</div>
+            <div class="extras-item__price" id="child-seat-price-label">+5 € / adet</div>
+          </div>
+          <div class="extras-item__control">
+            <div class="extras-qty">
+              <button class="extras-qty__btn" onclick="changeChildSeat(-1)">−</button>
+              <div class="extras-qty__val" id="child-seat-qty">0</div>
+              <button class="extras-qty__btn" onclick="changeChildSeat(1)">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Havalimanı Karşılama -->
+        <div class="extras-item">
+          <div class="extras-item__icon">🪧</div>
+          <div class="extras-item__info">
+            <div class="extras-item__name">Havalimanı Karşılama Hizmeti</div>
+            <div class="extras-item__desc">Havaalanı çıkışında üzerinde adınız yazılı bir kart sizi bekliyor olacak. Bu sayede aracınıza kadar eşlik edileceksiniz.</div>
+            <div class="extras-item__price" id="meet-greet-price-label">+2 €</div>
+          </div>
+          <div class="extras-item__control">
+            <label class="extras-toggle">
+              <input type="checkbox" id="meet-greet-toggle" onchange="updateExtrasTotal()">
+              <span class="extras-toggle__slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="extras-modal__footer">
+        <div class="extras-modal__total">Ek Hizmet: <strong id="extras-total-display">0 ₺</strong></div>
+        <button class="extras-modal__confirm" onclick="confirmExtras()">Onayla ve Devam Et</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Müşteri Bilgi Formu Modal -->
+  <div class="extras-overlay" id="customer-overlay">
+    <div class="extras-modal customer-form-modal">
+      <div class="extras-modal__header">
+        <h3 class="extras-modal__title">Müşteri Bilgileri</h3>
+        <button class="extras-modal__close" onclick="closeCustomerForm()">&times;</button>
+      </div>
+      <div class="extras-modal__body">
+        <div class="customer-form" id="customer-form-content">
+          <!-- JS ile dinamik olarak doldurulacak -->
+        </div>
+      </div>
+      <div class="extras-modal__footer">
+        <p class="customer-form__required-note">* ile işaretli alanlar zorunludur</p>
+        <button class="extras-modal__confirm" onclick="submitCustomerForm()">WhatsApp ile Rezervasyon Yap</button>
+      </div>
+    </div>
+  </div>
+
   <!-- WhatsApp FAB -->
   <!-- Theme Toggle -->
   <button class="theme-toggle" aria-label="Tema değiştir">
@@ -146,5 +250,6 @@
   <script src="js/vehicles.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/whatsapp.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKn8rCHTdXarUOSOrqj-i0QgZStNB7IL8&libraries=places" async defer></script>
 </body>
 </html>

@@ -1,0 +1,14 @@
+{
+    "rawTCMB":  {
+                    "USD_TRY":  44.1003,
+                    "EUR_TRY":  50.543
+                },
+    "rates":  {
+                  "TRY":  50.543,
+                  "USD":  1.1461,
+                  "EUR":  1
+              },
+    "source":  "TCMB",
+    "lastUpdate":  "2026-03-14T04:28:56+03:00",
+    "baseCurrency":  "EUR"
+}

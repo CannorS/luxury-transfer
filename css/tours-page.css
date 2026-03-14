@@ -1,0 +1,277 @@
+/* ========================================
+   LUXURY TRANSFER - Tours Page
+   ======================================== */
+
+/* --- Tours Intro --- */
+.tours-intro {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+}
+
+.tours-intro__text {
+  font-size: 1.05rem;
+  color: var(--text);
+  opacity: 0.7;
+  line-height: 1.8;
+}
+
+/* --- Tours Grid --- */
+.tours-page-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+/* --- Tour Page Card --- */
+.tp-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.3s, transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tp-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+}
+
+/* Image */
+.tp-card__image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.tp-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.tp-card:hover .tp-card__image img {
+  transform: scale(1.06);
+}
+
+.tp-card__badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  background: var(--primary);
+}
+
+.tp-card__badge--popular {
+  background: var(--gold);
+}
+
+.tp-card__badge--new {
+  background: var(--accent);
+}
+
+/* Body */
+.tp-card__body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tp-card__title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.tp-card__desc {
+  font-size: 0.88rem;
+  color: var(--text);
+  opacity: 0.65;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+/* Meta: duration, people, etc */
+.tp-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.tp-card__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.tp-card__meta-item svg {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  flex-shrink: 0;
+  opacity: 1;
+}
+
+/* Highlights */
+.tp-card__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.tp-card__highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.25rem 0.65rem;
+  background: var(--bg-alt);
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.tp-card__highlight svg {
+  width: 11px;
+  height: 11px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Footer */
+.tp-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  gap: 1rem;
+}
+
+.tp-card__price {
+  display: flex;
+  flex-direction: column;
+}
+
+.tp-card__price-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  opacity: 0.55;
+}
+
+.tp-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.tp-card__price-value {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.tp-card__price-value small {
+  font-size: 0.65rem;
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.tp-card__price-old {
+  font-size: 0.85rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.tp-card__cta .btn {
+  border-radius: 50px;
+  padding: 0.65rem 1.4rem;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* --- Tours CTA Section --- */
+.tours-cta {
+  background: linear-gradient(135deg, #111111 0%, var(--primary-dark) 100%);
+  padding: 4.5rem 0;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.tours-cta__title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 0.75rem;
+}
+
+.tours-cta__text {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.7);
+  max-width: 550px;
+  margin: 0 auto 2rem;
+}
+
+.tours-cta__buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .tours-page-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .tours-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tp-card__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tp-card__price-row {
+    margin-bottom: 0.25rem;
+  }
+
+  .tp-card__cta .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .tours-cta__title {
+    font-size: 1.65rem;
+  }
+}

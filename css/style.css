@@ -115,8 +115,17 @@ p:last-child { margin-bottom: 0; }
   padding: 5rem 0;
 }
 
+.section--soft {
+  background: #F8FAFB;
+}
+
+[data-theme="dark"] .section--soft {
+  background: #1A1A1A;
+}
+
 .section--gray {
   background: var(--bg-alt);
+  padding-bottom: calc(4rem + 25px);
 }
 
 .text-center { text-align: center; }
@@ -182,18 +191,18 @@ p:last-child { margin-bottom: 0; }
   left: 0;
   width: 100%;
   z-index: 1000;
-  padding: 1rem 0;
+  padding: 25px 0;
   transition: all var(--transition);
 }
 
 .header--transparent {
-  background: var(--bg);
+  background: #111111;
 }
 
 .header--solid {
-  background: var(--bg);
+  background: #111111;
   backdrop-filter: blur(10px);
-  padding: 0.75rem 0;
+  padding: 25px 0;
   box-shadow: var(--shadow-md);
 }
 
@@ -201,32 +210,29 @@ p:last-child { margin-bottom: 0; }
 .header__inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .header__logo {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  color: var(--logo-text);
-  font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
-
-.header__logo span {
-  color: var(--gold);
+.header__logo img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .header__nav {
   display: flex;
   align-items: center;
   gap: 2rem;
+  flex: 1;
+  justify-content: center;
 }
 
 .header__link {
-  color: var(--text);
+  color: #FFFFFF;
   opacity: 0.75;
   font-size: 0.95rem;
   font-weight: 500;
@@ -236,7 +242,7 @@ p:last-child { margin-bottom: 0; }
 
 .header__link:hover,
 .header__link--active {
-  color: var(--text-heading);
+  color: #FFFFFF;
   opacity: 1;
 }
 
@@ -270,12 +276,13 @@ p:last-child { margin-bottom: 0; }
   border: none;
   cursor: pointer;
   padding: 4px;
+  margin-left: auto;
 }
 
 .hamburger__line {
   width: 24px;
   height: 2px;
-  background: var(--text-heading);
+  background: #FFFFFF;
   transition: all var(--transition);
   border-radius: 2px;
 }
@@ -375,8 +382,9 @@ p:last-child { margin-bottom: 0; }
   z-index: 2;
   text-align: center;
   color: var(--white);
-  max-width: 800px;
-  padding: 0 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 2rem;
 }
 
 .hero__badge {
@@ -407,69 +415,444 @@ p:last-child { margin-bottom: 0; }
   line-height: 1.6;
 }
 
-/* Hero Mini Form */
-.hero-form {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-md);
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-end;
-  max-width: 780px;
+/* Booking Bar */
+.booking-bar {
+  width: 100%;
   margin: 0 auto;
-  overflow: hidden;
 }
 
-.hero-form__group {
-  flex: 1;
-  min-width: 0;
+.booking-bar__tabs {
   display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  gap: 0;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 2;
 }
 
-.hero-form__group--btn {
-  flex: 0 0 auto;
-}
-
-.hero-form__group--btn .btn {
-  padding: 0.7rem 1.5rem;
-  white-space: nowrap;
-  font-size: 0.9rem;
-  border-radius: var(--radius-sm);
-}
-
-.hero-form__label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #FFFFFF;
-  font-weight: 600;
-}
-
-.hero-form__select,
-.hero-form__input {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #FFFFFF;
-  padding: 0.7rem 1rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+.booking-bar__tab {
+  padding: 1rem 2.5rem;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: rgba(255,255,255,0.7);
   font-family: var(--font-body);
-  outline: none;
-  transition: border-color var(--transition);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
-.hero-form__select:focus,
-.hero-form__input:focus {
-  border-color: var(--primary-light);
-}
-
-.hero-form__select option {
+.booking-bar__tab.active {
   background: #FFFFFF;
   color: #1A1A1A;
+}
+
+.booking-bar__tab:not(.active):hover {
+  background: rgba(255,255,255,0.25);
+  color: #FFFFFF;
+}
+
+/* Vertical trip toggle (inside form) */
+.booking-bar__field--toggle {
+  flex: 0 0 auto;
+  border-right: none;
+  padding: 10px 14px;
+}
+
+.trip-toggle-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trip-toggle-vertical__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #999;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+
+.trip-toggle-vertical__switch {
+  position: relative;
+  width: 24px;
+  height: 44px;
+}
+
+.trip-toggle-vertical__switch input {
+  display: none;
+}
+
+.trip-toggle-vertical__slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 44px;
+  background: #ddd;
+  border-radius: 12px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+
+.trip-toggle-vertical__slider::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.trip-toggle-vertical__switch input:checked + .trip-toggle-vertical__slider {
+  background: var(--primary);
+}
+
+.trip-toggle-vertical__switch input:checked + .trip-toggle-vertical__slider::after {
+  transform: translateY(20px);
+}
+
+/* Time picker popup */
+.time-picker-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-picker-overlay.active {
+  display: flex;
+}
+
+.time-picker {
+  background: #FFFFFF;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  max-width: 360px;
+  width: 90%;
+}
+
+.time-picker__title {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.time-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.time-picker__slot {
+  padding: 10px 6px;
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #1A1A1A;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-picker__slot:hover {
+  background: var(--primary);
+  color: #FFFFFF;
+  border-color: var(--primary);
+}
+
+.time-picker__slot.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.booking-bar__form {
+  background: #FFFFFF;
+  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  min-height: 92px;
+}
+
+.booking-bar__field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 10px 18px;
+  border-right: 1px solid #E5E5E5;
+  min-width: 0;
+}
+
+.booking-bar__field--date {
+  flex: 1;
+}
+
+.booking-bar__field--clickable {
+  cursor: pointer;
+}
+
+.booking-bar__field--pax {
+  flex: 1;
+  border-right: none;
+  white-space: nowrap;
+}
+
+.booking-bar__icon {
+  color: var(--primary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.booking-bar__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.booking-bar__input-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  gap: 4px;
+  text-align: left;
+}
+
+.booking-bar__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #999;
+}
+
+.booking-bar__select,
+.booking-bar__datetime {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1A1A1A;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.booking-bar__datetime:invalid::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.booking-bar__datetime:invalid::before {
+  content: 'Tarih Seçiniz';
+  color: #999;
+  font-size: 0.95rem;
+  position: absolute;
+  pointer-events: none;
+}
+
+.booking-bar__datetime:invalid {
+  position: relative;
+}
+
+.booking-bar__select option {
+  background: #FFFFFF;
+  color: #1A1A1A;
+  padding: 10px;
+}
+
+.booking-bar__select::placeholder {
+  color: #999;
+  font-weight: 400;
+}
+
+/* Google Places Autocomplete dropdown */
+.pac-container {
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border: none;
+  margin-top: 6px;
+  font-family: var(--font-body);
+  z-index: 10000;
+  min-width: 400px !important;
+  width: auto !important;
+}
+
+.pac-item {
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border-top: 1px solid #f0f0f0;
+  line-height: 1.5;
+}
+
+.pac-item:hover {
+  background: #f5f8fb;
+}
+
+.pac-item-query {
+  font-size: 0.95rem;
+  color: #1A1A1A;
+}
+
+.pac-icon {
+  margin-right: 10px;
+}
+
+.booking-bar__swap {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid #E5E5E5;
+  background: #FFFFFF;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  margin: 0;
+  z-index: 2;
+  align-self: center;
+}
+
+.booking-bar__swap:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(91,155,213,0.05);
+}
+
+.booking-bar__submit {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 18px 28px;
+  background: var(--primary);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+.booking-bar__submit:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59,123,191,0.3);
+}
+
+.booking-bar__field--error {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.4) inset;
+  animation: fieldShake 0.4s ease;
+}
+
+.booking-bar__field--error .booking-bar__label {
+  color: #dc3545 !important;
+}
+
+.booking-bar__field--error input,
+.booking-bar__field--error select {
+  color: #dc3545 !important;
+}
+
+.booking-bar__field--error input::placeholder {
+  color: rgba(220, 53, 69, 0.6) !important;
+}
+
+@keyframes fieldShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+/* Booking bar responsive */
+@media (max-width: 900px) {
+  .booking-bar__form {
+    flex-wrap: wrap;
+  }
+  .booking-bar__field {
+    flex: 1 1 calc(50% - 1rem);
+    border-right: none;
+    border-bottom: 1px solid #E5E5E5;
+  }
+  .booking-bar__field--pax {
+    border-bottom: none;
+  }
+  .booking-bar__swap {
+    margin: 0 auto;
+    order: -1;
+    display: none;
+  }
+  .booking-bar__submit {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .booking-bar__form {
+    flex-direction: column;
+    padding: 0.75rem;
+  }
+  .booking-bar__field {
+    flex: 1 1 100%;
+    border-bottom: 1px solid #E5E5E5;
+    padding: 0.75rem 0.6rem;
+  }
+  .booking-bar__field--pax {
+    border-bottom: none;
+  }
+  .booking-bar__tab {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* --- Footer --- */
@@ -491,14 +874,13 @@ p:last-child { margin-bottom: 0; }
 }
 
 .footer__brand {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  color: var(--white);
   margin-bottom: 1rem;
 }
 
-.footer__brand span {
-  color: var(--gold);
+.footer__brand img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .footer__desc {
@@ -601,7 +983,7 @@ p:last-child { margin-bottom: 0; }
 .whatsapp-fab svg {
   width: 30px;
   height: 30px;
-  fill: var(--white);
+  fill: #ffffff !important;
 }
 
 /* --- Scroll Animation --- */

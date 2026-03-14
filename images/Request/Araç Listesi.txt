@@ -1,0 +1,24 @@
+BMW 7 Series — 2 Yolcu | 2 Bagaj
+KM Fiyatı: €5.25 | $6.01 | ₺265.49
+Minimum Ücret: €130 | $148.79 | ₺6,574.10
+Mercedes S Class — 2 Yolcu | 2 Bagaj
+KM Fiyatı: €5.25 | $6.01 | ₺265.49
+Minimum Ücret: €130 | $148.79 | ₺6,574.10
+Mercedes Maybach Ultra Lux — 4 Yolcu | 4 Bagaj
+KM Fiyatı: €1.20 | $1.37 | ₺60.68
+Minimum Ücret: €100 | $114.45 | ₺5,057.00
+Mercedes VIP Sprinter — 12 Yolcu | 12 Bagaj
+KM Fiyatı: €1.60 | $1.83 | ₺80.91
+Minimum Ücret: €150 | $171.68 | ₺7,585.50
+Mercedes VIP Vito — 6 Yolcu | 6 Bagaj
+KM Fiyatı: €1.08 | $1.24 | ₺54.62
+Minimum Ücret: €90 | $103.01 | ₺4,551.30
+Mercedes Std. Sprinter — 16 Yolcu | 16 Bagaj
+KM Fiyatı: €1.30 | $1.49 | ₺65.74
+Minimum Ücret: €130 | $148.79 | ₺6,574.10
+Mercedes/VW Standard Vito — 7 Yolcu | 7 Bagaj
+KM Fiyatı: €0.95 | $1.09 | ₺48.04
+Minimum Ücret: €80 | $91.56 | ₺4,045.60
+Standard Sedan — 2 Yolcu | 2 Bagaj
+KM Fiyatı: €0.80 | $0.92 | ₺40.46
+Minimum Ücret: €70 | $80.12 | ₺3,539.90

@@ -1,390 +1,874 @@
 /* ========================================
-   LUXURY TRANSFER - Rezervasyon Wizard
+   LUXURY TRANSFER - Rezervasyon Sayfası
    ======================================== */
 
-const popularRoutes = [
-  { label: 'Taksim', km: { IST: 45, SAW: 55 } },
-  { label: 'Sultanahmet', km: { IST: 50, SAW: 45 } },
-  { label: 'Kadıköy', km: { IST: 55, SAW: 40 } },
-  { label: 'Beşiktaş', km: { IST: 42, SAW: 58 } },
-  { label: 'Şişli', km: { IST: 40, SAW: 55 } },
-  { label: 'Beyoğlu', km: { IST: 45, SAW: 52 } },
-  { label: 'Bakırköy', km: { IST: 30, SAW: 50 } },
-  { label: 'Ataşehir', km: { IST: 50, SAW: 35 } },
-  { label: 'Levent', km: { IST: 38, SAW: 58 } },
-  { label: 'Sarıyer', km: { IST: 35, SAW: 70 } }
-];
+/* vehicleImages is defined in vehicles.js (loaded before this file) */
 
-const bookingState = {
-  step: 1,
-  serviceType: null,     // 'perKm' | 'hourly'
-  airport: null,         // 'IST' | 'SAW'
-  direction: null,       // 'from' | 'to'
-  route: null,           // { label, km }
-  customAddress: '',
-  flightNo: '',
-  passengers: 1,
-  luggage: 1,
-  date: '',
-  time: '',
-  hours: 3,             // for hourly
-  vehicleId: null,
-  name: '',
-  phone: '',
-  email: '',
-  estimatedKm: null,
-  totalPrice: null,
-  isNight: false
+/* Fiyatlar EUR bazlı saklanır, gösterim varsayılan TRY */
+/* Kurlar exchange-rates.json'dan yüklenir, fallback sabit değerler */
+const currencyConfig = {
+  EUR: { symbol: '€', rate: 1, locale: 'de-DE' },
+  TRY: { symbol: '₺', rate: 50.543, locale: 'tr-TR' },
+  USD: { symbol: '$', rate: 1.1461, locale: 'en-US' }
 };
+let selectedCurrency = 'TRY';
+let ratesLastUpdate = null;
 
-const TOTAL_STEPS = 6;
+/* TCMB kurlarını exchange-rates.json'dan yükle */
+function loadExchangeRates() {
+  fetch('js/exchange-rates.json?t=' + Date.now())
+    .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+    .then(data => {
+      if (data.rates) {
+        if (data.rates.TRY) currencyConfig.TRY.rate = data.rates.TRY;
+        if (data.rates.USD) currencyConfig.USD.rate = data.rates.USD;
+        ratesLastUpdate = data.lastUpdate || null;
+        // Fiyatları güncelle
+        renderVehicleList();
+        if (bookingParams.vehicle) updateSummaryWithVehicle(bookingParams.vehicle);
+      }
+    })
+    .catch(() => { /* fallback kurlar kullanılır */ });
+}
+loadExchangeRates();
+
+function convertPrice(priceEUR) {
+  const cfg = currencyConfig[selectedCurrency];
+  return Math.round(priceEUR * cfg.rate * 100) / 100;
+}
+
+function formatPrice(priceEUR) {
+  const cfg = currencyConfig[selectedCurrency];
+  const converted = convertPrice(priceEUR);
+  if (selectedCurrency === 'TRY') {
+    return converted.toLocaleString('tr-TR') + ' ' + cfg.symbol;
+  }
+  return converted.toLocaleString(cfg.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + cfg.symbol;
+}
+
+function changeCurrency() {
+  selectedCurrency = document.getElementById('filter-currency')?.value || 'TRY';
+  renderVehicleList();
+  if (bookingParams.vehicle) {
+    updateSummaryWithVehicle(bookingParams.vehicle);
+  }
+}
+
+const bookingParams = {};
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('booking-wizard')) return;
+  if (!document.getElementById('bp-vehicles')) return;
 
-  // Check URL params
+  // Read URL params from hero form
   const params = new URLSearchParams(window.location.search);
-  if (params.get('vehicle')) {
-    bookingState.vehicleId = params.get('vehicle');
-  }
+  bookingParams.from = params.get('from') || '';
+  bookingParams.to = params.get('to') || '';
+  bookingParams.date = params.get('date') || '';
+  bookingParams.time = params.get('time') || '';
+  bookingParams.returnDate = params.get('return_date') || '';
+  bookingParams.returnTime = params.get('return_time') || '';
+  bookingParams.pax = parseInt(params.get('pax')) || 1;
+  bookingParams.service = params.get('service') || 'transfer';
+  bookingParams.roundtrip = params.get('roundtrip') === '1';
+  bookingParams.hours = parseInt(params.get('hours')) || 0;
+  bookingParams.vehicle = params.get('vehicle') || null;
+  bookingParams.distanceKm = null;
+  bookingParams.duration = null;
 
-  renderStep();
-  updateStepIndicator();
+  renderVehicleList();
+  renderSummary();
+
+  // Mesafe hesapla
+  if (bookingParams.from && bookingParams.to) {
+    calculateDistance(bookingParams.from, bookingParams.to);
+  }
 });
 
-function renderStep() {
-  const container = document.getElementById('booking-content');
-  if (!container) return;
+/* --- Feature Icon SVGs --- */
+const featureIcons = {
+  sabitFiyat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>',
+  karsilama: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+  iptal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  ucusTakip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>'
+};
 
-  container.innerHTML = '';
+/* --- Araç müsaitlik kontrolü --- */
+function isVehicleReserved(vehicle, isHourly) {
+  // Saatlik modda: hourlyReserved flag'i olan araçlar rezerve
+  if (isHourly) return !!vehicle.hourlyReserved;
 
-  switch (bookingState.step) {
-    case 1: renderStep1(container); break;
-    case 2: renderStep2(container); break;
-    case 3: renderStep3(container); break;
-    case 4: renderStep4(container); break;
-    case 5: renderStep5(container); break;
-    case 6: renderStep6(container); break;
+  // Transfer (KM bazlı) modda:
+  // Standard Sedan her zaman dolu
+  if (vehicle.transferAlwaysReserved) return true;
+
+  // BMW 7 ve S-Class: seçilen tarih bugünden 3 günden az ilerideyse dolu
+  if (vehicle.transferMinDays && bookingParams.date) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selected = new Date(bookingParams.date + 'T00:00:00');
+    const diffMs = selected - today;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays < vehicle.transferMinDays) return true;
   }
 
-  updateStepIndicator();
-  updateNavButtons();
+  return false;
 }
 
-/* Step 1: Service Type */
-function renderStep1(container) {
-  container.innerHTML = `
-    <h2 class="text-center mb-3">Hizmet Tipini Seçin</h2>
-    <div class="grid grid--2 gap-4">
-      <div class="booking-option ${bookingState.serviceType === 'perKm' ? 'selected' : ''}" onclick="selectService('perKm')">
-        <div class="booking-option__icon">🚗</div>
-        <h3 class="booking-option__title">KM Bazlı Transfer</h3>
-        <p class="booking-option__text">Havalimanı transferi veya şehir içi nokta-nokta transfer hizmeti. Mesafeye göre fiyatlandırma.</p>
+/* --- Render Vehicle Cards --- */
+function applyFilters() {
+  renderVehicleList();
+}
+
+function renderVehicleList() {
+  const container = document.getElementById('bp-vehicles');
+  if (!container) return;
+
+  const isHourlyMode = bookingParams.service === 'hourly';
+
+  // Filtre değerlerini oku
+  const filterPax = parseInt(document.getElementById('filter-pax')?.value || '0');
+  const filterLuggage = parseInt(document.getElementById('filter-luggage')?.value || '0');
+  const filterSort = document.getElementById('filter-sort')?.value || 'asc';
+
+  // Filtrele
+  let filtered = vehicles.filter(v => {
+    if (filterPax > 0 && v.passengers < filterPax) return false;
+    if (filterLuggage > 0 && v.luggage < filterLuggage) return false;
+    return true;
+  });
+
+  // Sırala: rezerve olanlar sona, sonra fiyata göre
+  const sorted = [...filtered].sort((a, b) => {
+    const aRes = isVehicleReserved(a, isHourlyMode) ? 1 : 0;
+    const bRes = isVehicleReserved(b, isHourlyMode) ? 1 : 0;
+    if (aRes !== bRes) return aRes - bRes;
+    const aPrice = calculateVehiclePrice(a);
+    const bPrice = calculateVehiclePrice(b);
+    return filterSort === 'asc' ? aPrice - bPrice : bPrice - aPrice;
+  });
+
+  const isHourly = bookingParams.service === 'hourly';
+
+  if (sorted.length === 0) {
+    container.innerHTML = '<div class="bp-no-results"><p>Seçilen filtrelere uygun araç bulunamadı.</p></div>';
+    return;
+  }
+
+  container.innerHTML = sorted.map(v => {
+    const isReserved = isVehicleReserved(v, isHourly);
+    const price = isReserved ? 0 : calculateVehiclePrice(v);
+    const isSelected = bookingParams.vehicle === v.id;
+    const img = vehicleImages[v.id] || v.image || '';
+
+    return `
+    <div class="bp-vehicle-card ${isSelected ? 'selected' : ''} ${isReserved ? 'bp-vehicle-card--reserved' : ''}" id="vc-${v.id}">
+      <div class="bp-vehicle-card__image">
+        <img src="${img}" alt="${v.name}" loading="lazy">
+        ${isReserved ? '<div class="bp-vehicle-card__reserved-overlay"><span>Rezerve</span></div>' : ''}
       </div>
-      <div class="booking-option ${bookingState.serviceType === 'hourly' ? 'selected' : ''}" onclick="selectService('hourly')">
-        <div class="booking-option__icon">⏱️</div>
-        <h3 class="booking-option__title">Saatlik Kiralama</h3>
-        <p class="booking-option__text">Şoförlü araç kiralama. Toplantılar, şehir turları ve etkinlikler için ideal. Minimum 3 saat.</p>
+      <div class="bp-vehicle-card__info">
+        <!-- Üst: İsim + Kapasite -->
+        <div class="bp-vehicle-card__header">
+          <div>
+            <h3 class="bp-vehicle-card__name">${v.name}</h3>
+            <span class="bp-vehicle-card__class">${v.classLabel}</span>
+          </div>
+          <div class="bp-vehicle-card__capacity">
+            <span class="bp-vehicle-card__cap-item">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              1-${v.passengers} Kişi
+            </span>
+            <span class="bp-vehicle-card__cap-item">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17 6h-2V3H9v3H7c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2 0 .55.45 1 1 1s1-.45 1-1h6c0 .55.45 1 1 1s1-.45 1-1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM11 5h2v1h-2V5z"/></svg>
+              1-${v.luggage} Bagaj
+            </span>
+          </div>
+        </div>
+
+        <!-- Orta: 4 Özellik -->
+        <div class="bp-vehicle-card__features">
+          <div class="bp-vehicle-card__feature">
+            <div class="bp-vehicle-card__feature-icon">${featureIcons.sabitFiyat}</div>
+            <span>Sabit<br>Fiyat</span>
+          </div>
+          <div class="bp-vehicle-card__feature">
+            <div class="bp-vehicle-card__feature-icon">${featureIcons.karsilama}</div>
+            <span>Havalimanı<br>Karşılama</span>
+          </div>
+          <div class="bp-vehicle-card__feature">
+            <div class="bp-vehicle-card__feature-icon">${featureIcons.iptal}</div>
+            <span>Ücretsiz<br>İptal</span>
+          </div>
+          <div class="bp-vehicle-card__feature">
+            <div class="bp-vehicle-card__feature-icon">${featureIcons.ucusTakip}</div>
+            <span>Uçuş<br>Takibi</span>
+          </div>
+        </div>
+
+        ${isReserved
+          ? '<p class="bp-vehicle-card__note bp-vehicle-card__note--reserved">Bu araç şu anda müsait değildir. Lütfen başka bir araç seçiniz.</p>'
+          : '<p class="bp-vehicle-card__note">Lütfen rezervasyon yaparak detayları gözden geçirin.</p>'
+        }
+
+        <!-- Alt: Fiyat + Roundtrip notu + Buton -->
+        <div class="bp-vehicle-card__bottom">
+          ${isReserved ? `
+          <div class="bp-vehicle-card__price-area">
+            <span class="bp-vehicle-card__reserved-text">Müsait Değil</span>
+          </div>
+          <button class="bp-vehicle-card__book-btn bp-vehicle-card__book-btn--disabled" disabled>
+            Rezerve Edildi
+          </button>
+          ` : `
+          <div class="bp-vehicle-card__price-area">
+            ${bookingParams.roundtrip ? '<span class="bp-vehicle-card__roundtrip-badge">Gidiş dönüş toplam araç fiyatları</span>' : ''}
+            <div class="bp-vehicle-card__price-row">
+              <span class="bp-vehicle-card__price">${formatPrice(price)}</span>
+            </div>
+          </div>
+          <button class="bp-vehicle-card__book-btn" onclick="selectBookingVehicle('${v.id}')">
+            Rezervasyon Yap
+          </button>
+          `}
+        </div>
       </div>
     </div>`;
+  }).join('');
 }
 
-function selectService(type) {
-  bookingState.serviceType = type;
-  renderStep();
-}
+/* --- Calculate Price --- */
+function calculateVehiclePrice(vehicle) {
+  // Hesaplanmış km varsa onu kullan
+  const km = bookingParams.calculatedKm || bookingParams.distanceKm;
+  if (km && bookingParams.service !== 'hourly') {
+    return calculateVehiclePriceWithKm(vehicle, km);
+  }
 
-/* Step 2: Airport & Direction */
-function renderStep2(container) {
-  container.innerHTML = `
-    <h2 class="text-center mb-3">Havalimanı ve Yön Seçin</h2>
-    <div class="grid grid--2 gap-4 mb-4">
-      <div class="booking-option ${bookingState.airport === 'IST' ? 'selected' : ''}" onclick="selectAirport('IST')">
-        <div class="booking-option__icon">✈️</div>
-        <h3 class="booking-option__title">İstanbul Havalimanı</h3>
-        <p class="booking-option__text">IST - Arnavutköy</p>
-      </div>
-      <div class="booking-option ${bookingState.airport === 'SAW' ? 'selected' : ''}" onclick="selectAirport('SAW')">
-        <div class="booking-option__icon">✈️</div>
-        <h3 class="booking-option__title">Sabiha Gökçen</h3>
-        <p class="booking-option__text">SAW - Pendik</p>
-      </div>
-    </div>
-    ${bookingState.airport ? `
-    <h3 class="text-center mb-2">Transfer Yönü</h3>
-    <div class="grid grid--2 gap-4">
-      <div class="booking-option ${bookingState.direction === 'from' ? 'selected' : ''}" onclick="selectDirection('from')">
-        <div class="booking-option__icon">🛬</div>
-        <h3 class="booking-option__title">Havalimanından</h3>
-        <p class="booking-option__text">Havalimanından şehre transfer</p>
-      </div>
-      <div class="booking-option ${bookingState.direction === 'to' ? 'selected' : ''}" onclick="selectDirection('to')">
-        <div class="booking-option__icon">🛫</div>
-        <h3 class="booking-option__title">Havalimanına</h3>
-        <p class="booking-option__text">Şehirden havalimanına transfer</p>
-      </div>
-    </div>` : ''}`;
-}
-
-function selectAirport(code) {
-  bookingState.airport = code;
-  bookingState.route = null;
-  bookingState.estimatedKm = null;
-  renderStep();
-}
-
-function selectDirection(dir) {
-  bookingState.direction = dir;
-  renderStep();
-}
-
-/* Step 3: Address / Route + Passenger Info */
-function renderStep3(container) {
-  const isHourly = bookingState.serviceType === 'hourly';
-
-  container.innerHTML = `
-    <h2 class="text-center mb-3">${isHourly ? 'Buluşma Noktası ve Detaylar' : 'Adres ve Yolcu Bilgileri'}</h2>
-    ${!isHourly ? `
-    <div class="mb-3">
-      <label class="form-label">Popüler Rotalar</label>
-      <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
-        ${popularRoutes.map(r => `
-          <span class="chip ${bookingState.route && bookingState.route.label === r.label ? 'selected' : ''}"
-                onclick="selectRoute('${r.label}', ${r.km[bookingState.airport] || 50})">
-            ${r.label} (~${r.km[bookingState.airport] || 50} km)
-          </span>`).join('')}
-      </div>
-    </div>` : ''}
-    <div class="form-group">
-      <label class="form-label">${isHourly ? 'Buluşma Adresi' : 'Özel Adres (opsiyonel)'}</label>
-      <input type="text" class="form-input" id="custom-address" placeholder="Adres veya otel adını yazın..."
-             value="${bookingState.customAddress}" onchange="bookingState.customAddress=this.value">
-    </div>
-    ${!isHourly ? `
-    <div class="form-group">
-      <label class="form-label">Uçuş No (opsiyonel)</label>
-      <input type="text" class="form-input" id="flight-no" placeholder="TK1234"
-             value="${bookingState.flightNo}" onchange="bookingState.flightNo=this.value">
-    </div>` : ''}
-    <div class="grid grid--2 gap-2">
-      <div class="form-group">
-        <label class="form-label">Yolcu Sayısı</label>
-        <select class="form-select" id="passenger-count" onchange="bookingState.passengers=parseInt(this.value)">
-          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<option value="${n}" ${bookingState.passengers === n ? 'selected' : ''}>${n}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Bagaj Sayısı</label>
-        <select class="form-select" id="luggage-count" onchange="bookingState.luggage=parseInt(this.value)">
-          ${[0,1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<option value="${n}" ${bookingState.luggage === n ? 'selected' : ''}>${n}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-    ${isHourly ? `
-    <div class="form-group">
-      <label class="form-label">Kaç Saat</label>
-      <select class="form-select" id="hour-count" onchange="bookingState.hours=parseInt(this.value)">
-        ${[3,4,5,6,7,8,10,12].map(n => `<option value="${n}" ${bookingState.hours === n ? 'selected' : ''}>${n} saat</option>`).join('')}
-      </select>
-    </div>` : ''}`;
-}
-
-function selectRoute(label, km) {
-  bookingState.route = { label, km };
-  bookingState.estimatedKm = km;
-  bookingState.customAddress = '';
-  renderStep();
-}
-
-/* Step 4: Date & Time */
-function renderStep4(container) {
-  const today = new Date().toISOString().split('T')[0];
-  container.innerHTML = `
-    <h2 class="text-center mb-3">Tarih ve Saat</h2>
-    <div class="grid grid--2 gap-2">
-      <div class="form-group">
-        <label class="form-label">Tarih</label>
-        <input type="date" class="form-input" id="booking-date" min="${today}"
-               value="${bookingState.date}" onchange="bookingState.date=this.value; checkNightSurcharge();">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Saat</label>
-        <input type="time" class="form-input" id="booking-time"
-               value="${bookingState.time}" onchange="bookingState.time=this.value; checkNightSurcharge();">
-      </div>
-    </div>
-    <div class="night-notice" id="night-notice">
-      🌙 Gece ücreti: 22:00 - 06:00 arası transferlere %20 ek ücret uygulanır.
-    </div>`;
-
-  if (bookingState.time) checkNightSurcharge();
-}
-
-function checkNightSurcharge() {
-  const time = document.getElementById('booking-time')?.value;
-  const notice = document.getElementById('night-notice');
-  if (!time || !notice) return;
-
-  const hour = parseInt(time.split(':')[0]);
-  bookingState.isNight = (hour >= 22 || hour < 6);
-  notice.classList.toggle('visible', bookingState.isNight);
-}
-
-/* Step 5: Vehicle Selection */
-function renderStep5(container) {
-  const suitableVehicles = vehicles.filter(v => v.passengers >= bookingState.passengers);
-
-  container.innerHTML = `
-    <h2 class="text-center mb-3">Araç Seçimi</h2>
-    <div class="grid grid--3" id="booking-vehicles">
-      ${suitableVehicles.map(v => {
-        const price = calculatePrice(v);
-        const isSelected = bookingState.vehicleId === v.id;
-        return `
-          <div class="booking-option ${isSelected ? 'selected' : ''}" onclick="selectVehicle('${v.id}')" style="text-align:left;padding:1.25rem">
-            <h4 style="margin-bottom:0.25rem">${v.name}</h4>
-            <div style="font-size:0.85rem;color:var(--primary);margin-bottom:0.5rem">${v.classLabel}</div>
-            <div style="font-size:0.8rem;color:#666;margin-bottom:0.75rem">${v.passengers} yolcu · ${v.luggage} bagaj</div>
-            <div style="font-size:0.8rem;color:#666">Tahmini Fiyat</div>
-            <div style="font-size:1.4rem;font-family:var(--font-heading);font-weight:700;color:var(--black)">${price.toLocaleString('tr-TR')} ₺</div>
-            ${bookingState.isNight ? '<div style="font-size:0.75rem;color:var(--gold)">Gece ücreti dahil</div>' : ''}
-          </div>`;
-      }).join('')}
-    </div>
-    ${!bookingState.route && bookingState.serviceType === 'perKm' ? '<p class="text-center mt-4" style="color:#666;font-size:0.85rem">* Özel adres seçildi. Kesin fiyat WhatsApp üzerinden onaylanacaktır.</p>' : ''}`;
-}
-
-function selectVehicle(id) {
-  bookingState.vehicleId = id;
-  const v = vehicles.find(veh => veh.id === id);
-  if (v) bookingState.totalPrice = calculatePrice(v);
-  renderStep();
-}
-
-/* Step 6: Summary + Contact */
-function renderStep6(container) {
-  const v = vehicles.find(veh => veh.id === bookingState.vehicleId);
-  if (!v) { bookingState.step = 5; renderStep(); return; }
-
-  const price = calculatePrice(v);
-  bookingState.totalPrice = price;
-
-  const dirLabel = bookingState.direction === 'from' ? 'Havalimanından' : 'Havalimanına';
-  const airportLabel = bookingState.airport === 'IST' ? 'İstanbul Havalimanı' : 'Sabiha Gökçen';
-  const addr = bookingState.route ? bookingState.route.label : (bookingState.customAddress || 'Belirtilecek');
-
-  container.innerHTML = `
-    <h2 class="text-center mb-3">Rezervasyon Özeti</h2>
-    <div class="booking-summary mb-4">
-      <div class="booking-summary__row"><span class="booking-summary__label">Hizmet</span><span class="booking-summary__value">${bookingState.serviceType === 'perKm' ? 'KM Bazlı Transfer' : 'Saatlik Kiralama'}</span></div>
-      <div class="booking-summary__row"><span class="booking-summary__label">Havalimanı</span><span class="booking-summary__value">${airportLabel}</span></div>
-      ${bookingState.serviceType === 'perKm' ? `
-      <div class="booking-summary__row"><span class="booking-summary__label">Yön</span><span class="booking-summary__value">${dirLabel}</span></div>
-      <div class="booking-summary__row"><span class="booking-summary__label">Adres</span><span class="booking-summary__value">${addr}</span></div>
-      ${bookingState.estimatedKm ? `<div class="booking-summary__row"><span class="booking-summary__label">Tahmini Mesafe</span><span class="booking-summary__value">~${bookingState.estimatedKm} km</span></div>` : ''}
-      ` : `
-      <div class="booking-summary__row"><span class="booking-summary__label">Süre</span><span class="booking-summary__value">${bookingState.hours} saat</span></div>
-      `}
-      ${bookingState.flightNo ? `<div class="booking-summary__row"><span class="booking-summary__label">Uçuş No</span><span class="booking-summary__value">${bookingState.flightNo}</span></div>` : ''}
-      <div class="booking-summary__row"><span class="booking-summary__label">Tarih</span><span class="booking-summary__value">${bookingState.date}</span></div>
-      <div class="booking-summary__row"><span class="booking-summary__label">Saat</span><span class="booking-summary__value">${bookingState.time}</span></div>
-      <div class="booking-summary__row"><span class="booking-summary__label">Yolcu / Bagaj</span><span class="booking-summary__value">${bookingState.passengers} yolcu / ${bookingState.luggage} bagaj</span></div>
-      <div class="booking-summary__row"><span class="booking-summary__label">Araç</span><span class="booking-summary__value">${v.name}</span></div>
-      ${bookingState.isNight ? `<div class="booking-summary__row"><span class="booking-summary__label">Gece Ücreti (%20)</span><span class="booking-summary__value" style="color:var(--gold)">Dahil</span></div>` : ''}
-      <div class="booking-summary__row" style="font-size:1.1rem"><span class="booking-summary__label" style="font-weight:700">Toplam</span><span class="booking-summary__value booking-summary__total">${price.toLocaleString('tr-TR')} ₺</span></div>
-    </div>
-
-    <h3 class="mb-2">İletişim Bilgileriniz</h3>
-    <div class="form-group">
-      <label class="form-label">Ad Soyad *</label>
-      <input type="text" class="form-input" id="book-name" placeholder="Ad Soyad" value="${bookingState.name}" onchange="bookingState.name=this.value">
-    </div>
-    <div class="grid grid--2 gap-2">
-      <div class="form-group">
-        <label class="form-label">Telefon *</label>
-        <input type="tel" class="form-input" id="book-phone" placeholder="+90 5XX XXX XXXX" value="${bookingState.phone}" onchange="bookingState.phone=this.value">
-      </div>
-      <div class="form-group">
-        <label class="form-label">E-posta</label>
-        <input type="email" class="form-input" id="book-email" placeholder="ornek@email.com" value="${bookingState.email}" onchange="bookingState.email=this.value">
-      </div>
-    </div>
-    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem">
-      <button class="btn btn--whatsapp btn--lg" onclick="sendWhatsApp()" style="flex:1">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.682-1.415A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.24 0-4.318-.726-6.003-1.956l-.42-.312-2.774.838.87-2.675-.342-.462A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
-        WhatsApp ile Rezervasyon
-      </button>
-      <button class="btn btn--primary btn--lg" onclick="sendEmail()" style="flex:1">
-        E-posta ile Gönder
-      </button>
-    </div>`;
-}
-
-/* --- Price Calculation --- */
-function calculatePrice(vehicle) {
   let price = 0;
+  const isRoundtrip = bookingParams.roundtrip;
 
-  if (bookingState.serviceType === 'perKm') {
-    const km = bookingState.estimatedKm || vehicle.pricing.perKm.minKm;
-    price = Math.max(vehicle.pricing.perKm.basePrice, km * vehicle.pricing.perKm.pricePerKm);
-  } else {
-    const hours = Math.max(vehicle.pricing.hourly.minHours, bookingState.hours || 3);
+  if (bookingParams.service === 'hourly') {
+    const hours = Math.max(vehicle.pricing.hourly.minHours, bookingParams.hours || vehicle.pricing.hourly.minHours);
     price = hours * vehicle.pricing.hourly.pricePerHour;
+    if (isRoundtrip) price *= 2;
+  } else {
+    const km = vehicle.pricing.perKm.minKm;
+    const totalKm = isRoundtrip ? km * 2 : km;
+    const kmPrice = totalKm * vehicle.pricing.perKm.pricePerKm;
+    const minPrice = vehicle.pricing.perKm.minPrice || 0;
+    const effectiveMin = isRoundtrip ? minPrice * 2 : minPrice;
+    price = (minPrice > 0 && kmPrice < effectiveMin) ? effectiveMin : kmPrice;
   }
 
   // Night surcharge
-  if (bookingState.isNight) {
-    price = Math.round(price * 1.2);
+  if (bookingParams.time) {
+    const hour = parseInt(bookingParams.time.split(':')[0]);
+    if (hour >= 22 || hour < 6) {
+      price = Math.round(price * 1.2);
+    }
   }
 
   return Math.round(price);
 }
 
-/* --- Navigation --- */
-function nextStep() {
-  if (!validateCurrentStep()) return;
-  if (bookingState.step < TOTAL_STEPS) {
-    bookingState.step++;
-    renderStep();
-    window.scrollTo({ top: document.getElementById('booking-wizard').offsetTop - 100, behavior: 'smooth' });
+/* --- Render Summary Sidebar --- */
+function renderSummary() {
+  const body = document.getElementById('bp-summary-body');
+  if (!body) return;
+
+  const rows = [];
+
+  // Nereden
+  rows.push(summaryRow('location', 'NEREDEN', bookingParams.from || 'Belirtilmedi'));
+
+  // Nereye
+  rows.push(summaryRow('location', 'NEREYE', bookingParams.to || 'Belirtilmedi'));
+
+  // Gidiş Tarihi + Saat
+  if (bookingParams.date) {
+    let gidisLabel = formatDateTR(bookingParams.date);
+    if (bookingParams.time) gidisLabel += ' - ' + bookingParams.time;
+    rows.push(summaryRow('calendar', 'GİDİŞ TARİHİ', gidisLabel));
+  } else {
+    rows.push(summaryRow('calendar', 'GİDİŞ TARİHİ', 'Belirtilmedi'));
+  }
+
+  // Dönüş Tarihi (sadece gidiş-dönüş ise)
+  if (bookingParams.roundtrip) {
+    if (bookingParams.returnDate) {
+      let donusLabel = formatDateTR(bookingParams.returnDate);
+      if (bookingParams.returnTime) donusLabel += ' - ' + bookingParams.returnTime;
+      rows.push(summaryRow('calendar', 'DÖNÜŞ TARİHİ', donusLabel));
+    } else {
+      rows.push(summaryRow('calendar', 'DÖNÜŞ TARİHİ', 'Belirtilmedi'));
+    }
+  }
+
+  // Mesafe
+  if (bookingParams.distanceKm) {
+    const totalKm = Math.round(bookingParams.distanceKm * 2 * 10) / 10;
+    const kmText = bookingParams.roundtrip
+      ? bookingParams.distanceKm + ' KM (tek yön) / ' + totalKm + ' KM (toplam)'
+      : bookingParams.distanceKm + ' KM';
+    rows.push(summaryRow('distance', 'MESAFE', kmText));
+  } else if (bookingParams.from && bookingParams.to) {
+    rows.push(summaryRow('distance', 'MESAFE', '<span id="distance-loading">Hesaplanıyor...</span>'));
+  }
+
+  // Tahmini Süre (sadece transfer modunda)
+  if (bookingParams.duration && bookingParams.service !== 'hourly') {
+    rows.push(summaryRow('clock', 'TAHMİNİ SÜRE', bookingParams.duration));
+  }
+
+  // Kişi Sayısı
+  rows.push(summaryRow('users', 'KİŞİ SAYISI', bookingParams.pax || 1));
+
+  // Süre (saatlik modda)
+  if (bookingParams.service === 'hourly' && bookingParams.hours) {
+    rows.push(summaryRow('clock', 'SÜRE', bookingParams.hours + ' Saat'));
+  }
+
+  // Gidiş - Dönüş Durumu (sadece transfer modunda)
+  if (bookingParams.service !== 'hourly') {
+    rows.push(summaryRow('repeat', 'GİDİŞ - DÖNÜŞ', bookingParams.roundtrip ? 'EVET' : 'HAYIR'));
+  }
+
+  body.innerHTML = rows.join('');
+}
+
+function formatDateTR(dateStr) {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+
+function summaryRow(icon, label, value) {
+  const icons = {
+    location: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+    users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+    repeat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>',
+    service: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+    distance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M8 6h10v10"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+  };
+
+  return `
+    <div class="bp-summary__row">
+      <div class="bp-summary__icon">${icons[icon] || ''}</div>
+      <div class="bp-summary__row-content">
+        <div class="bp-summary__label">${label}</div>
+        <div class="bp-summary__value">${value}</div>
+      </div>
+    </div>`;
+}
+
+/* --- Ek Hizmetler --- */
+let extrasState = {
+  childSeatCount: 0,
+  meetGreet: false
+};
+
+const CHILD_SEAT_PRICE = 5;   // EUR
+const MEET_GREET_PRICE = 2;   // EUR
+
+function getExtrasTotal() {
+  let total = 0;
+  total += extrasState.childSeatCount * CHILD_SEAT_PRICE;
+  if (extrasState.meetGreet) total += MEET_GREET_PRICE;
+  return total;
+}
+
+function changeChildSeat(delta) {
+  extrasState.childSeatCount = Math.max(0, extrasState.childSeatCount + delta);
+  document.getElementById('child-seat-qty').textContent = extrasState.childSeatCount;
+  updateExtrasTotal();
+}
+
+function updateExtrasTotal() {
+  const toggle = document.getElementById('meet-greet-toggle');
+  if (toggle) extrasState.meetGreet = toggle.checked;
+  const total = getExtrasTotal();
+  const display = document.getElementById('extras-total-display');
+  if (display) display.textContent = formatPrice(total);
+}
+
+function openExtras() {
+  const overlay = document.getElementById('extras-overlay');
+  if (overlay) {
+    // Fiyat etiketlerini seçili para birimine göre güncelle
+    const csLabel = document.getElementById('child-seat-price-label');
+    if (csLabel) csLabel.textContent = '+' + formatPrice(CHILD_SEAT_PRICE) + ' / adet';
+    const mgLabel = document.getElementById('meet-greet-price-label');
+    if (mgLabel) mgLabel.textContent = '+' + formatPrice(MEET_GREET_PRICE);
+
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeExtras();
+    });
   }
 }
 
-function prevStep() {
-  if (bookingState.step > 1) {
-    bookingState.step--;
-    renderStep();
+function closeExtras() {
+  const overlay = document.getElementById('extras-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
   }
 }
 
-function validateCurrentStep() {
-  switch (bookingState.step) {
-    case 1: return !!bookingState.serviceType;
-    case 2: return !!bookingState.airport && (bookingState.serviceType === 'hourly' || !!bookingState.direction);
-    case 3: return bookingState.serviceType === 'hourly' || !!bookingState.route || !!bookingState.customAddress;
-    case 4: return !!bookingState.date && !!bookingState.time;
-    case 5: return !!bookingState.vehicleId;
-    case 6: return !!bookingState.name && !!bookingState.phone;
-  }
-  return true;
+function confirmExtras() {
+  closeExtras();
+  updateSummaryWithVehicle(bookingParams.vehicle);
+  openCustomerForm();
 }
 
-function updateStepIndicator() {
-  document.querySelectorAll('.step-indicator__circle').forEach((circle, i) => {
-    const stepNum = i + 1;
-    circle.classList.remove('step-indicator__circle--active', 'step-indicator__circle--done');
-    if (stepNum === bookingState.step) circle.classList.add('step-indicator__circle--active');
-    else if (stepNum < bookingState.step) circle.classList.add('step-indicator__circle--done');
+/* --- Müşteri Bilgi Formu --- */
+function openCustomerForm() {
+  const overlay = document.getElementById('customer-overlay');
+  if (!overlay) return;
+
+  // Formu dinamik oluştur
+  buildCustomerForm();
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeCustomerForm();
   });
+}
 
-  document.querySelectorAll('.step-indicator__line').forEach((line, i) => {
-    line.classList.toggle('step-indicator__line--done', i + 1 < bookingState.step);
+function buildCustomerForm() {
+  const container = document.getElementById('customer-form-content');
+  if (!container) return;
+
+  const pax = bookingParams.pax || 1;
+  let html = '';
+
+  // 1. Yolcu (her zaman gösterilir)
+  html += `
+    <div class="customer-form__section">
+      <div class="customer-form__section-title">Rezervasyon Sahibi</div>
+      <div class="customer-form__group">
+        <label class="customer-form__label">Ad Soyad *</label>
+        <input type="text" class="customer-form__input" id="pax-name-0" placeholder="Adınız ve soyadınız">
+      </div>
+      <div class="customer-form__row">
+        <div class="customer-form__group customer-form__group--half">
+          <label class="customer-form__label">Telefon *</label>
+          <input type="tel" class="customer-form__input" id="pax-phone-0" placeholder="+90 5XX XXX XX XX">
+        </div>
+        <div class="customer-form__group customer-form__group--half">
+          <label class="customer-form__label">Uçuş Numarası *</label>
+          <input type="text" class="customer-form__input" id="pax-flight-0" placeholder="TK 1234">
+        </div>
+      </div>
+      <div class="customer-form__group">
+        <label class="customer-form__label">E-posta</label>
+        <input type="email" class="customer-form__input" id="pax-email-0" placeholder="ornek@email.com">
+      </div>
+    </div>`;
+
+  // Ek yolcular (2. kişiden itibaren)
+  for (let i = 1; i < pax; i++) {
+    html += `
+    <div class="customer-form__section">
+      <div class="customer-form__section-title">${i + 1}. Yolcu</div>
+      <div class="customer-form__group">
+        <label class="customer-form__label">Ad Soyad *</label>
+        <input type="text" class="customer-form__input" id="pax-name-${i}" placeholder="${i + 1}. yolcunun adı soyadı">
+      </div>
+      <div class="customer-form__row">
+        <div class="customer-form__group customer-form__group--half">
+          <label class="customer-form__label">Telefon *</label>
+          <input type="tel" class="customer-form__input" id="pax-phone-${i}" placeholder="+90 5XX XXX XX XX">
+        </div>
+        <div class="customer-form__group customer-form__group--half">
+          <label class="customer-form__label">Uçuş Numarası *</label>
+          <input type="text" class="customer-form__input" id="pax-flight-${i}" placeholder="TK 1234">
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Not alanı
+  html += `
+    <div class="customer-form__section">
+      <div class="customer-form__group">
+        <label class="customer-form__label">Not / Özel İstek</label>
+        <textarea class="customer-form__input customer-form__textarea" id="customer-note" rows="3" placeholder="Varsa özel isteklerinizi yazabilirsiniz..."></textarea>
+      </div>
+    </div>`;
+
+  container.innerHTML = html;
+}
+
+function closeCustomerForm() {
+  const overlay = document.getElementById('customer-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function submitCustomerForm() {
+  const pax = bookingParams.pax || 1;
+  const errorFields = [];
+
+  // Tüm yolcuları doğrula
+  for (let i = 0; i < pax; i++) {
+    const name = document.getElementById('pax-name-' + i);
+    const phone = document.getElementById('pax-phone-' + i);
+    const flight = document.getElementById('pax-flight-' + i);
+
+    if (name && !name.value.trim()) errorFields.push(name);
+    if (phone && !phone.value.trim()) errorFields.push(phone);
+    if (flight && !flight.value.trim()) errorFields.push(flight);
+  }
+
+  if (errorFields.length > 0) {
+    errorFields.forEach(f => {
+      f.classList.add('customer-form__input--error');
+      setTimeout(() => f.classList.remove('customer-form__input--error'), 3000);
+    });
+    // İlk hatalı alana scroll
+    errorFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Bilgileri kaydet
+  bookingParams.passengers = [];
+  for (let i = 0; i < pax; i++) {
+    bookingParams.passengers.push({
+      name: document.getElementById('pax-name-' + i).value.trim(),
+      phone: document.getElementById('pax-phone-' + i).value.trim(),
+      flight: document.getElementById('pax-flight-' + i).value.trim()
+    });
+  }
+
+  const emailEl = document.getElementById('pax-email-0');
+  bookingParams.customerEmail = emailEl ? emailEl.value.trim() : '';
+  bookingParams.customerNote = (document.getElementById('customer-note')?.value || '').trim();
+
+  // Eski alanları da set et (WhatsApp mesajı için)
+  bookingParams.customerName = bookingParams.passengers[0].name;
+  bookingParams.customerPhone = bookingParams.passengers[0].phone;
+  bookingParams.customerFlight = bookingParams.passengers[0].flight;
+
+  closeCustomerForm();
+  sendBookingWhatsApp();
+}
+
+/* --- Select Vehicle → Open Extras --- */
+function selectBookingVehicle(id) {
+  bookingParams.vehicle = id;
+
+  // Highlight selected
+  document.querySelectorAll('.bp-vehicle-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('vc-' + id);
+  if (card) card.classList.add('selected');
+
+  // Reset extras
+  extrasState.childSeatCount = 0;
+  extrasState.meetGreet = false;
+  const qtyEl = document.getElementById('child-seat-qty');
+  if (qtyEl) qtyEl.textContent = '0';
+  const toggleEl = document.getElementById('meet-greet-toggle');
+  if (toggleEl) toggleEl.checked = false;
+  updateExtrasTotal();
+
+  // Sidebar'da seçilen aracı ve toplam tutarı göster
+  updateSummaryWithVehicle(id);
+
+  // Ek hizmetler modalını aç
+  openExtras();
+}
+
+function updateSummaryWithVehicle(id) {
+  const v = vehicles.find(veh => veh.id === id);
+  if (!v) return;
+
+  const km = bookingParams.calculatedKm || bookingParams.distanceKm;
+  let price, priceDetail;
+  if (km && bookingParams.service !== 'hourly') {
+    priceDetail = calculateVehiclePriceDetailed(v, km);
+    price = priceDetail.total;
+  } else {
+    price = calculateVehiclePrice(v);
+    priceDetail = null;
+  }
+  const extrasTotal = getExtrasTotal();
+  const grandTotal = price + extrasTotal;
+
+  // Toplam satırını sidebar'a ekle
+  const summary = document.getElementById('bp-summary');
+  if (!summary) return;
+
+  // Önceki eklenen bölümleri kaldır
+  const oldTotal = summary.querySelector('.bp-summary__total-row');
+  if (oldTotal) oldTotal.remove();
+  summary.querySelectorAll('.bp-summary__extras-section').forEach(el => el.remove());
+  summary.querySelectorAll('.bp-summary__surcharge-note').forEach(el => el.remove());
+  const oldAction = summary.querySelector('.bp-summary__action');
+  if (oldAction) oldAction.remove();
+
+  // Araç bilgisi
+  let html = '';
+  html += `<div class="bp-summary__extras-section">`;
+  html += `<div class="bp-summary__section-title">Seçilen Araç</div>`;
+  html += `<div class="bp-summary__line-item"><span>${v.name}</span><span>${formatPrice(price)}</span></div>`;
+  html += `</div>`;
+
+  // Ek Hizmetler
+  if (extrasState.childSeatCount > 0 || extrasState.meetGreet) {
+    html += `<div class="bp-summary__extras-section">`;
+    html += `<div class="bp-summary__section-title">Ek Hizmetler</div>`;
+    if (extrasState.childSeatCount > 0) {
+      html += `<div class="bp-summary__line-item"><span>Çocuk Koltuğu x${extrasState.childSeatCount}</span><span>${formatPrice(extrasState.childSeatCount * CHILD_SEAT_PRICE)}</span></div>`;
+    }
+    if (extrasState.meetGreet) {
+      html += `<div class="bp-summary__line-item"><span>Havalimanı Karşılama</span><span>${formatPrice(MEET_GREET_PRICE)}</span></div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Toplam
+  html += `<div class="bp-summary__total-row"><span class="bp-summary__total-label">TOPLAM TUTAR</span><span class="bp-summary__total-price">${formatPrice(grandTotal)}</span></div>`;
+
+  // Minimum ücret farkı açıklaması
+  if (priceDetail && priceDetail.minApplied) {
+    html += `<div class="bp-summary__surcharge-note">`;
+    html += `<div class="bp-summary__surcharge-icon">ℹ️</div>`;
+    html += `<div class="bp-summary__surcharge-text">`;
+    html += `KM bazlı ücret (${formatPrice(priceDetail.kmPrice)}) minimum ücretin altında kaldığı için <strong>+${formatPrice(priceDetail.surchargeAmount)}</strong> minimum ücret farkı uygulanmıştır.`;
+    html += `</div></div>`;
+  }
+
+  // Rezervasyonu Onayla butonu
+  html += `<div class="bp-summary__action"><button class="bp-summary__confirm-btn" onclick="openCustomerForm()">Rezervasyonu Onayla</button></div>`;
+
+  summary.insertAdjacentHTML('beforeend', html);
+}
+
+/* --- Send WhatsApp --- */
+function sendBookingWhatsApp() {
+  const v = vehicles.find(veh => veh.id === bookingParams.vehicle);
+  if (!v) return;
+
+  const km = bookingParams.calculatedKm || bookingParams.distanceKm;
+  const price = km ? calculateVehiclePriceWithKm(v, km) : calculateVehiclePrice(v);
+  const extrasTotal = getExtrasTotal();
+  const grandTotal = price + extrasTotal;
+
+  updateSummaryWithVehicle(bookingParams.vehicle);
+
+  const extras = [];
+  if (extrasState.childSeatCount > 0) {
+    extras.push(`🪑 Çocuk Koltuğu: ${extrasState.childSeatCount} adet (${formatPrice(extrasState.childSeatCount * CHILD_SEAT_PRICE)})`);
+  }
+  if (extrasState.meetGreet) {
+    extras.push(`🪧 Havalimanı Karşılama Hizmeti (${formatPrice(MEET_GREET_PRICE)})`);
+  }
+
+  const paxLines = [];
+  if (bookingParams.passengers && bookingParams.passengers.length > 0) {
+    bookingParams.passengers.forEach((p, i) => {
+      if (bookingParams.passengers.length === 1) {
+        paxLines.push(`👤 Ad Soyad: ${p.name}`);
+        paxLines.push(`📞 Telefon: ${p.phone}`);
+        if (p.flight) paxLines.push(`✈️ Uçuş No: ${p.flight}`);
+      } else {
+        paxLines.push(`👤 ${i + 1}. Yolcu: ${p.name} | Tel: ${p.phone}${p.flight ? ' | Uçuş: ' + p.flight : ''}`);
+      }
+    });
+  }
+
+  const msg = [
+    '🚗 *LUXURY TRANSFER - Rezervasyon Talebi*',
+    '',
+    ...paxLines,
+    bookingParams.customerEmail ? `📧 E-posta: ${bookingParams.customerEmail}` : '',
+    '',
+    `📍 Nereden: ${bookingParams.from || 'Belirtilmedi'}`,
+    `📍 Nereye: ${bookingParams.to || 'Belirtilmedi'}`,
+    `📅 Gidiş: ${formatDateTR(bookingParams.date)} ${bookingParams.time || ''}`,
+    bookingParams.roundtrip ? `📅 Dönüş: ${formatDateTR(bookingParams.returnDate)} ${bookingParams.returnTime || ''}` : '',
+    `👥 Kişi Sayısı: ${bookingParams.pax}`,
+    bookingParams.service !== 'hourly' ? `🔄 Gidiş-Dönüş: ${bookingParams.roundtrip ? 'Evet' : 'Hayır'}` : '',
+    bookingParams.distanceKm ? `📏 Mesafe: ${bookingParams.distanceKm} KM${bookingParams.roundtrip ? ' (tek yön) / ' + (bookingParams.distanceKm * 2) + ' KM (toplam)' : ''}` : '',
+    bookingParams.duration && bookingParams.service !== 'hourly' ? `⏱️ Tahmini Süre: ${bookingParams.duration}` : '',
+    bookingParams.service === 'hourly' && bookingParams.hours ? `⏱️ Kiralama Süresi: ${bookingParams.hours} Saat` : '',
+    '',
+    `🚘 Araç: ${v.name} (${formatPrice(price)})`,
+    extras.length > 0 ? '\n📌 *Ek Hizmetler:*' : '',
+    ...extras,
+    '',
+    `💰 *TOPLAM: ${formatPrice(grandTotal)}*`,
+    bookingParams.customerNote ? `\n📝 Not: ${bookingParams.customerNote}` : '',
+    '',
+    'Rezervasyonumu onaylamak istiyorum.'
+  ].filter(Boolean).join('\n');
+
+  const encoded = encodeURIComponent(msg);
+  window.open(`https://wa.me/905551234567?text=${encoded}`, '_blank');
+}
+
+/* --- Google Maps Distance Calculation --- */
+function calculateDistance(origin, destination) {
+  // 10 saniye timeout — API yanıt vermezse fallback
+  const timeout = setTimeout(() => {
+    distanceFallback();
+  }, 10000);
+
+  function onSuccess() {
+    clearTimeout(timeout);
+    runDistanceCalc(origin, destination, timeout);
+  }
+
+  if (typeof google === 'undefined' || !google.maps) {
+    const script = document.createElement('script');
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAKn8rCHTdXarUOSOrqj-i0QgZStNB7IL8&libraries=places';
+    script.onload = onSuccess;
+    script.onerror = () => { clearTimeout(timeout); distanceFallback(); };
+    document.head.appendChild(script);
+    return;
+  }
+  onSuccess();
+}
+
+function distanceFallback() {
+  bookingParams.distanceKm = null;
+  const el = document.getElementById('distance-loading');
+  if (el) el.textContent = 'Hesaplanamadı — fiyatlar minimum mesafeye göre gösterilmektedir.';
+}
+
+function runDistanceCalc(origin, destination) {
+  try {
+    const service = new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix(
+      {
+        origins: [origin],
+        destinations: [destination],
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.METRIC
+      },
+      function(response, status) {
+        if (status === 'OK' && response.rows[0] && response.rows[0].elements[0]) {
+          const element = response.rows[0].elements[0];
+          if (element.status === 'OK') {
+            const distanceKm = Math.round(element.distance.value / 100) / 10;
+            bookingParams.distanceKm = distanceKm;
+            bookingParams.duration = element.duration.text;
+            renderSummary();
+            updatePricesWithDistance(distanceKm);
+            return;
+          }
+        }
+        distanceFallback();
+      }
+    );
+  } catch (e) {
+    distanceFallback();
+  }
+}
+
+function updatePricesWithDistance(km) {
+  bookingParams.calculatedKm = km;
+
+  // Araç kartlarındaki fiyatları güncelle
+  const container = document.getElementById('bp-vehicles');
+  if (!container) return;
+
+  document.querySelectorAll('.bp-vehicle-card').forEach(card => {
+    const id = card.id.replace('vc-', '');
+    const v = vehicles.find(veh => veh.id === id);
+    if (!v) return;
+
+    const price = calculateVehiclePriceWithKm(v, km);
+    const priceEl = card.querySelector('.bp-vehicle-card__price');
+    if (priceEl) {
+      priceEl.innerHTML = formatPrice(price);
+    }
   });
 }
 
-function updateNavButtons() {
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
-  if (prevBtn) prevBtn.style.visibility = bookingState.step > 1 ? 'visible' : 'hidden';
-  if (nextBtn) nextBtn.style.display = bookingState.step < TOTAL_STEPS ? '' : 'none';
+function calculateVehiclePriceWithKm(vehicle, km) {
+  let price = 0;
+  const isRoundtrip = bookingParams.roundtrip;
+  let totalKm = isRoundtrip ? km * 2 : km;
+  let minApplied = false;
+  let surchargeAmount = 0;
+
+  if (bookingParams.service === 'hourly') {
+    const hours = Math.max(vehicle.pricing.hourly.minHours, bookingParams.hours || vehicle.pricing.hourly.minHours);
+    price = hours * vehicle.pricing.hourly.pricePerHour;
+    if (isRoundtrip) price *= 2;
+  } else {
+    const kmPrice = totalKm * vehicle.pricing.perKm.pricePerKm;
+    const minPrice = vehicle.pricing.perKm.minPrice || 0;
+    const effectiveMin = isRoundtrip ? minPrice * 2 : minPrice;
+    if (minPrice > 0 && kmPrice < effectiveMin) {
+      surchargeAmount = effectiveMin - kmPrice;
+      price = effectiveMin;
+      minApplied = true;
+    } else {
+      price = kmPrice;
+    }
+  }
+
+  // Night surcharge
+  if (bookingParams.time) {
+    const hour = parseInt(bookingParams.time.split(':')[0]);
+    if (hour >= 22 || hour < 6) {
+      price = Math.round(price * 1.2);
+    }
+  }
+
+  return Math.round(price);
+}
+
+/* Detaylı fiyat bilgisi döndüren versiyon (sidebar için) */
+function calculateVehiclePriceDetailed(vehicle, km) {
+  let price = 0;
+  const isRoundtrip = bookingParams.roundtrip;
+  let totalKm = isRoundtrip ? km * 2 : km;
+  let minApplied = false;
+  let surchargeAmount = 0;
+  let kmPrice = 0;
+
+  if (bookingParams.service === 'hourly') {
+    const hours = Math.max(vehicle.pricing.hourly.minHours, bookingParams.hours || vehicle.pricing.hourly.minHours);
+    price = hours * vehicle.pricing.hourly.pricePerHour;
+    if (isRoundtrip) price *= 2;
+  } else {
+    kmPrice = totalKm * vehicle.pricing.perKm.pricePerKm;
+    const minPrice = vehicle.pricing.perKm.minPrice || 0;
+    const effectiveMin = isRoundtrip ? minPrice * 2 : minPrice;
+    if (minPrice > 0 && kmPrice < effectiveMin) {
+      surchargeAmount = Math.round(effectiveMin - kmPrice);
+      price = effectiveMin;
+      minApplied = true;
+    } else {
+      price = kmPrice;
+    }
+  }
+
+  // Night surcharge
+  let nightSurcharge = false;
+  if (bookingParams.time) {
+    const hour = parseInt(bookingParams.time.split(':')[0]);
+    if (hour >= 22 || hour < 6) {
+      price = Math.round(price * 1.2);
+      nightSurcharge = true;
+    }
+  }
+
+  return {
+    total: Math.round(price),
+    kmPrice: Math.round(kmPrice),
+    minApplied,
+    surchargeAmount,
+    nightSurcharge
+  };
 }
