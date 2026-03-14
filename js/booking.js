@@ -465,7 +465,7 @@ function buildCustomerForm() {
         </div>
       </div>
       <div class="customer-form__group">
-        <label class="customer-form__label">E-posta</label>
+        <label class="customer-form__label">E-posta *</label>
         <input type="email" class="customer-form__input" id="pax-email-0" placeholder="ornek@email.com">
       </div>
     </div>`;
@@ -491,6 +491,28 @@ function buildCustomerForm() {
       </div>
     </div>`;
   }
+
+  // Ödeme Yöntemi
+  html += `
+    <div class="customer-form__section">
+      <div class="customer-form__section-title">Ödeme Yöntemi *</div>
+      <div class="customer-form__payment-options" id="payment-options">
+        <label class="customer-form__payment-option" id="payment-card-label">
+          <input type="radio" name="payment-method" value="card" id="payment-card">
+          <div class="customer-form__payment-box">
+            <span class="customer-form__payment-icon">💳</span>
+            <span class="customer-form__payment-text">Araçta Kredi Kartıyla Ödeme</span>
+          </div>
+        </label>
+        <label class="customer-form__payment-option" id="payment-cash-label">
+          <input type="radio" name="payment-method" value="cash" id="payment-cash">
+          <div class="customer-form__payment-box">
+            <span class="customer-form__payment-icon">💵</span>
+            <span class="customer-form__payment-text">Araçta Nakit Ödeme</span>
+          </div>
+        </label>
+      </div>
+    </div>`;
 
   // Not alanı
   html += `
@@ -527,12 +549,27 @@ function submitCustomerForm() {
     if (flight && !flight.value.trim()) errorFields.push(flight);
   }
 
+  // E-posta kontrolü
+  const emailEl = document.getElementById('pax-email-0');
+  if (emailEl && !emailEl.value.trim()) errorFields.push(emailEl);
+
+  // Ödeme yöntemi kontrolü
+  const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
+  if (!paymentMethod) {
+    const paymentOptions = document.getElementById('payment-options');
+    if (paymentOptions) {
+      paymentOptions.classList.add('customer-form__payment-options--error');
+      setTimeout(() => paymentOptions.classList.remove('customer-form__payment-options--error'), 3000);
+      paymentOptions.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return;
+  }
+
   if (errorFields.length > 0) {
     errorFields.forEach(f => {
       f.classList.add('customer-form__input--error');
       setTimeout(() => f.classList.remove('customer-form__input--error'), 3000);
     });
-    // İlk hatalı alana scroll
     errorFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
@@ -547,9 +584,9 @@ function submitCustomerForm() {
     });
   }
 
-  const emailEl = document.getElementById('pax-email-0');
   bookingParams.customerEmail = emailEl ? emailEl.value.trim() : '';
   bookingParams.customerNote = (document.getElementById('customer-note')?.value || '').trim();
+  bookingParams.paymentMethod = paymentMethod.value === 'card' ? 'Araçta Kredi Kartı' : 'Araçta Nakit';
 
   // Eski alanları da set et (WhatsApp mesajı için)
   bookingParams.customerName = bookingParams.passengers[0].name;
@@ -557,7 +594,67 @@ function submitCustomerForm() {
   bookingParams.customerFlight = bookingParams.passengers[0].flight;
 
   closeCustomerForm();
+
+  // E-posta gönderimi (arka planda)
+  sendReservationEmail();
+
+  // WhatsApp'ı aç
   sendBookingWhatsApp();
+}
+
+/* --- Rezervasyon E-posta Gönderimi --- */
+function sendReservationEmail() {
+  const v = vehicles.find(veh => veh.id === bookingParams.vehicle);
+  if (!v) return;
+
+  const km = bookingParams.calculatedKm || bookingParams.distanceKm;
+  const price = km ? calculateVehiclePriceWithKm(v, km) : calculateVehiclePrice(v);
+  const extrasTotal = getExtrasTotal();
+  const grandTotal = price + extrasTotal;
+
+  const payload = {
+    customerName: bookingParams.customerName,
+    customerPhone: bookingParams.customerPhone,
+    customerEmail: bookingParams.customerEmail || '',
+    customerFlight: bookingParams.customerFlight || '',
+    vehicle: v.name,
+    from: bookingParams.from || '',
+    to: bookingParams.to || '',
+    date: bookingParams.date ? formatDateTR(bookingParams.date) : '',
+    time: bookingParams.time || '',
+    returnDate: bookingParams.returnDate ? formatDateTR(bookingParams.returnDate) : '',
+    returnTime: bookingParams.returnTime || '',
+    pax: bookingParams.pax || 1,
+    service: bookingParams.service || 'transfer',
+    roundtrip: !!bookingParams.roundtrip,
+    hours: bookingParams.hours || 0,
+    distanceKm: bookingParams.distanceKm || '',
+    duration: bookingParams.duration || '',
+    price: formatPrice(price),
+    extrasTotal: formatPrice(extrasTotal),
+    grandTotal: formatPrice(grandTotal),
+    currency: selectedCurrency,
+    paymentMethod: bookingParams.paymentMethod || '',
+    customerNote: bookingParams.customerNote || '',
+    childSeatCount: extrasState.childSeatCount,
+    meetGreet: extrasState.meetGreet,
+    passengers: bookingParams.passengers || []
+  };
+
+  fetch('api/send-reservation.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success) {
+      console.warn('E-posta gönderilemedi:', data.error);
+    }
+  })
+  .catch(err => {
+    console.warn('E-posta gönderim hatası:', err);
+  });
 }
 
 /* --- Select Vehicle → Open Extras --- */
@@ -705,13 +802,14 @@ function sendBookingWhatsApp() {
     ...extras,
     '',
     `💰 *TOPLAM: ${formatPrice(grandTotal)}*`,
+    bookingParams.paymentMethod ? `\n💳 *Ödeme Yöntemi:* ${bookingParams.paymentMethod}` : '',
     bookingParams.customerNote ? `\n📝 Not: ${bookingParams.customerNote}` : '',
     '',
     'Rezervasyonumu onaylamak istiyorum.'
   ].filter(Boolean).join('\n');
 
   const encoded = encodeURIComponent(msg);
-  window.open(`https://wa.me/905551234567?text=${encoded}`, '_blank');
+  window.open(`https://wa.me/905302544784?text=${encoded}`, '_blank');
 }
 
 /* --- Google Maps Distance Calculation --- */

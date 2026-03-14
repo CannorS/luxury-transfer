@@ -213,8 +213,10 @@ function openTimePicker(type, selectedDate) {
   let startMin = 0;
 
   if (isToday) {
-    startHour = now.getHours();
-    startMin = now.getMinutes();
+    // Şu anki saat + 1 saat sonrasından itibaren seçilebilir
+    const minTime = new Date(now.getTime() + 60 * 60 * 1000);
+    startHour = minTime.getHours();
+    startMin = minTime.getMinutes();
     if (startMin > 0 && startMin <= 30) {
       startMin = 30;
     } else if (startMin > 30) {

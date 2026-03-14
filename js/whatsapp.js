@@ -2,7 +2,7 @@
    LUXURY TRANSFER - WhatsApp Integration
    ======================================== */
 
-const WHATSAPP_NUMBER = '905551234567'; // Değiştirilecek gerçek numara
+const WHATSAPP_NUMBER = '905302544784';
 
 function buildWhatsAppMessage() {
   const s = bookingState;
@@ -66,7 +66,7 @@ function sendEmail() {
 
   const msg = buildWhatsAppMessage().replace(/\*/g, '').replace(/🚗|👤|📞|📧|📋|✈️|🔄|📍|📏|⏱️|📅|🕐|👥|🧳|🚘|🌙|💰/g, '');
   const subject = `Luxury Transfer Rezervasyon - ${bookingState.name}`;
-  const mailtoUrl = `mailto:info@luxurytransfer.com.tr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+  const mailtoUrl = `mailto:info@luxuryairportshuttle.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
   window.open(mailtoUrl, '_blank');
 }
 

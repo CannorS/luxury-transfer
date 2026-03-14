@@ -7,7 +7,7 @@
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: 1.5rem 0;
-  margin-top: 80px;
+  margin-top: 100px;
 }
 
 .bp-steps__bar {
@@ -436,9 +436,68 @@
   min-height: 70px;
 }
 
+/* Ödeme Yöntemi */
+.customer-form__payment-options {
+  display: flex;
+  gap: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  padding: 2px;
+  transition: border-color 0.3s;
+}
+
+.customer-form__payment-options--error {
+  border-color: #e74c3c;
+}
+
+.customer-form__payment-option {
+  flex: 1;
+  cursor: pointer;
+}
+
+.customer-form__payment-option input[type="radio"] {
+  display: none;
+}
+
+.customer-form__payment-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border: 2px solid var(--border, #E5E5E5);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--card-bg, #fff);
+  transition: all 0.2s;
+}
+
+.customer-form__payment-option:hover .customer-form__payment-box {
+  border-color: var(--primary, #5B9BD5);
+}
+
+.customer-form__payment-option input[type="radio"]:checked + .customer-form__payment-box {
+  border-color: var(--primary, #5B9BD5);
+  background: rgba(91, 155, 213, 0.06);
+}
+
+.customer-form__payment-icon {
+  font-size: 1.3rem;
+}
+
+.customer-form__payment-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-heading, #1A1A1A);
+}
+
+@media (max-width: 480px) {
+  .customer-form__payment-options {
+    flex-direction: column;
+  }
+}
+
 .customer-form__required-note {
   font-size: 0.75rem;
-  color: #999;
+  color: #e74c3c;
   margin: 0;
 }
 

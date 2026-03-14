@@ -1,0 +1,17 @@
+# API dizini korumasi
+# Sadece PHP dosyalarina POST isteklerine izin ver
+
+# Dizin listelemeyi kapat
+Options -Indexes
+
+# PHP disindaki dosyalara dogrudan erisimi engelle
+<FilesMatch "^(?!.*\.php$)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# smtp-mailer.php dosyasina dogrudan erisimi engelle
+<Files "smtp-mailer.php">
+    Order Allow,Deny
+    Deny from all
+</Files>

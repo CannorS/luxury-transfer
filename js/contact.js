@@ -74,7 +74,7 @@ function submitContactForm() {
 
   const subject = `İletişim Formu - ${name}`;
   const body = `Ad: ${name}\nE-posta: ${email}\nTelefon: ${phone}\n\nMesaj:\n${message}`;
-  const mailtoUrl = `mailto:info@luxurytransfer.com.tr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const mailtoUrl = `mailto:info@luxuryairportshuttle.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   window.open(mailtoUrl, '_blank');
 
   // Show success
